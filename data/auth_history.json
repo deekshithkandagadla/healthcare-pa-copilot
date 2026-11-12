@@ -1,0 +1,18 @@
+[
+  {
+    "auth_id": "AUTH-5501",
+    "patient_id": "PT-005",
+    "service_code": "72148",
+    "service_date": "2026-05-02",
+    "status": "approved",
+    "description": "Lumbar spine MRI"
+  },
+  {
+    "auth_id": "AUTH-6001",
+    "patient_id": "PT-006",
+    "service_code": "97110",
+    "service_date": "2026-07-20",
+    "status": "approved",
+    "description": "Physical therapy, 8 visits"
+  }
+]

@@ -1,0 +1,296 @@
+{
+  "resourceType": "Bundle",
+  "type": "collection",
+  "id": "BUNDLE-PT-007",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Patient",
+        "id": "PT-007",
+        "name": [
+          {
+            "text": "Synthetic Patient 007"
+          }
+        ],
+        "gender": "female",
+        "birthDate": "1975-04-17",
+        "meta": {
+          "tag": [
+            {
+              "code": "SYNTHETIC"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Coverage",
+        "id": "COV-007",
+        "status": "active",
+        "beneficiary": {
+          "reference": "Patient/PT-007"
+        },
+        "subscriberId": "MBR-007",
+        "period": {
+          "start": "2024-06-01"
+        },
+        "class": [
+          {
+            "type": {
+              "text": "plan"
+            },
+            "value": "HMO-RURAL"
+          }
+        ]
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "COND-007-01",
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.50",
+              "display": "Low back pain, unspecified"
+            }
+          ],
+          "text": "Low back pain, unspecified"
+        },
+        "onsetDateTime": "2026-05-20"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "COND-007-02",
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "clinicalStatus": {
+          "coding": [
+            {
+              "code": "active"
+            }
+          ]
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://hl7.org/fhir/sid/icd-10-cm",
+              "code": "M54.16",
+              "display": "Radiculopathy, lumbar region"
+            }
+          ],
+          "text": "Radiculopathy, lumbar region"
+        },
+        "onsetDateTime": "2026-06-05"
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-03",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Physical therapy visit"
+          }
+        ],
+        "serviceType": {
+          "text": "physical-therapy"
+        },
+        "period": {
+          "start": "2026-06-15",
+          "end": "2026-06-15"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-04",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Physical therapy visit"
+          }
+        ],
+        "serviceType": {
+          "text": "physical-therapy"
+        },
+        "period": {
+          "start": "2026-06-22",
+          "end": "2026-06-22"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-05",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Physical therapy visit"
+          }
+        ],
+        "serviceType": {
+          "text": "physical-therapy"
+        },
+        "period": {
+          "start": "2026-06-29",
+          "end": "2026-06-29"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-06",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Physical therapy visit"
+          }
+        ],
+        "serviceType": {
+          "text": "physical-therapy"
+        },
+        "period": {
+          "start": "2026-07-06",
+          "end": "2026-07-06"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-07",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Physical therapy visit"
+          }
+        ],
+        "serviceType": {
+          "text": "physical-therapy"
+        },
+        "period": {
+          "start": "2026-07-13",
+          "end": "2026-07-13"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "Encounter",
+        "id": "ENC-007-08",
+        "status": "finished",
+        "class": {
+          "system": "http://terminology.hl7.org/CodeSystem/v3-ActCode",
+          "code": "AMB",
+          "display": "ambulatory"
+        },
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "type": [
+          {
+            "text": "Office visit"
+          }
+        ],
+        "serviceType": {
+          "text": "primary-care"
+        },
+        "period": {
+          "start": "2026-07-30",
+          "end": "2026-07-30"
+        }
+      }
+    },
+    {
+      "resource": {
+        "resourceType": "DocumentReference",
+        "id": "DOC-NOTE-010",
+        "status": "current",
+        "subject": {
+          "reference": "Patient/PT-007"
+        },
+        "date": "2026-07-30T09:00:00Z",
+        "type": {
+          "text": "Clinical note"
+        },
+        "description": "Rural health clinic",
+        "content": [
+          {
+            "attachment": {
+              "contentType": "text/markdown",
+              "url": "notes/NOTE-010.md",
+              "title": "NOTE-010"
+            }
+          }
+        ],
+        "meta": {
+          "tag": [
+            {
+              "code": "ehr"
+            }
+          ]
+        }
+      }
+    }
+  ]
+}

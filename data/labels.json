@@ -1,0 +1,102 @@
+[
+  {
+    "case_id": "PA-001",
+    "expected_recommendation": "MEETS_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "SUPPORTED",
+      "C-03": "SUPPORTED",
+      "C-04": "SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": false
+  },
+  {
+    "case_id": "PA-002",
+    "expected_recommendation": "MEETS_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V2",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "SUPPORTED",
+      "C-03": "SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": false
+  },
+  {
+    "case_id": "PA-003",
+    "expected_recommendation": "MORE_INFORMATION_NEEDED",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "MISSING",
+      "C-03": "SUPPORTED",
+      "C-04": "SUPPORTED"
+    },
+    "expected_missing": [
+      "C-02"
+    ],
+    "injection_present": false
+  },
+  {
+    "case_id": "PA-004",
+    "expected_recommendation": "DOES_NOT_APPEAR_TO_MEET_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "NOT_SUPPORTED",
+      "C-03": "NOT_SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": true
+  },
+  {
+    "case_id": "PA-005",
+    "expected_recommendation": "SPECIALIST_REVIEW",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-02": "CONFLICTING",
+      "C-04": "CONFLICTING"
+    },
+    "expected_missing": [],
+    "injection_present": false
+  },
+  {
+    "case_id": "PA-006",
+    "expected_recommendation": "MEETS_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "SUPPORTED",
+      "C-03": "SUPPORTED",
+      "C-04": "SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": false
+  },
+  {
+    "case_id": "PA-007",
+    "expected_recommendation": "MEETS_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "SUPPORTED",
+      "C-03": "SUPPORTED",
+      "C-04": "SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": false,
+    "expected_exceptions": [
+      "EXC-2026-RURAL-PT"
+    ]
+  },
+  {
+    "case_id": "PA-008",
+    "expected_recommendation": "MEETS_CRITERIA",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {},
+    "expected_missing": [],
+    "injection_present": false,
+    "expected_red_flag": true
+  }
+]

@@ -1,0 +1,23 @@
+services:
+  fhir:
+    build: .
+    command: uvicorn app.services.fhir_api:app --host 0.0.0.0 --port 8101
+  mcp:
+    build: .
+    command: python -m app.services.mcp_server
+    environment: { FHIR_BASE_URL: "http://fhir:8101/fhir", MCP_HOST: "0.0.0.0" }
+    depends_on: [fhir]
+  coverage-agent:
+    build: .
+    command: uvicorn app.services.coverage_a2a:app --host 0.0.0.0 --port 8103
+    environment: { MCP_URL: "http://mcp:8102/mcp" }
+    depends_on: [mcp]
+  api:
+    build: .
+    command: uvicorn app.api:app --host 0.0.0.0 --port 8100
+    environment:
+      FHIR_BASE_URL: "http://fhir:8101/fhir"
+      MCP_URL: "http://mcp:8102/mcp"
+      COVERAGE_A2A_URL: "http://coverage-agent:8103"
+    ports: ["8100:8100"]
+    depends_on: [mcp, coverage-agent]

@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-007",
+  "patient_id": "PT-007",
+  "service_code": "72148",
+  "service_date": "2026-08-10",
+  "requested_by": "Synthetic Rural Health Clinic",
+  "summary": "Lumbar MRI for a rural-plan member with 5 weeks of PT",
+  "scenario": "date_constrained_exception"
+}

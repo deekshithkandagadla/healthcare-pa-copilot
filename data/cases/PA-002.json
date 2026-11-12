@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-002",
+  "patient_id": "PT-002",
+  "service_code": "72148",
+  "service_date": "2026-02-10",
+  "requested_by": "Synthetic Family Medicine",
+  "summary": "Lumbar MRI requested before the Version 3 effective date",
+  "scenario": "policy_version_conflict"
+}

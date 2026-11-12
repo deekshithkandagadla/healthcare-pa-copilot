@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-003",
+  "patient_id": "PT-003",
+  "service_code": "72148",
+  "service_date": "2026-10-05",
+  "requested_by": "Synthetic Internal Medicine",
+  "summary": "Lumbar MRI, therapy mentioned but duration not documented",
+  "scenario": "missing_documentation"
+}

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prior Authorization Copilot</title>
+<link rel="stylesheet" href="/assets/app.css">
+</head>
+<body>
+<header>
+  <div><strong>Prior Authorization Copilot</strong> <span class="muted">· synthetic data · decision support only</span></div>
+  <label class="toggle"><input type="checkbox" id="outage"> Simulate coverage-agent (A2A) outage</label>
+</header>
+<main>
+  <aside id="cases"><h2>Cases</h2><ul id="case-list"></ul></aside>
+  <section id="stream">
+    <div class="row"><h2>Live agent activity <span class="muted">(AG-UI)</span></h2>
+      <button id="run" disabled>Run investigation</button></div>
+    <div id="agents"></div>
+    <ol id="events"></ol>
+  </section>
+  <section id="surface">
+    <h2>Review <span class="muted">(A2UI)</span></h2>
+    <div id="surface-root"><p class="muted">Select a case and run an investigation.</p></div>
+    <details id="audit-box"><summary>Audit trail</summary><ol id="audit"></ol></details>
+  </section>
+</main>
+<script src="/assets/app.js"></script>
+</body>
+</html>

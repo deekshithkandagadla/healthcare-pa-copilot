@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-006",
+  "patient_id": "PT-006",
+  "service_code": "72148",
+  "service_date": "2026-10-25",
+  "requested_by": "Synthetic Primary Care Clinic",
+  "summary": "Lumbar MRI; used to demonstrate the coverage-service outage fallback",
+  "scenario": "a2a_outage"
+}

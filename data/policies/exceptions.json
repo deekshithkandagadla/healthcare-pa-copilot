@@ -1,0 +1,26 @@
+[
+  {
+    "exception_id": "EXC-2026-RURAL-PT",
+    "policy_family": "POL-MRI-LUMBAR",
+    "applies_to_policy": "POL-MRI-LUMBAR-V3",
+    "plans": ["HMO-RURAL"],
+    "criterion_id": "C-02",
+    "override": {"value": 4},
+    "effective_start": "2026-04-01",
+    "effective_end": "2026-12-31",
+    "section": "E1",
+    "text": "Rural access exception: for HMO-RURAL members, the physical therapy requirement in criterion C-02 is reduced from 6 weeks to 4 weeks because of limited therapy access. Effective 2026-04-01 through 2026-12-31."
+  },
+  {
+    "exception_id": "EXC-2025-GOLD-PT",
+    "policy_family": "POL-MRI-LUMBAR",
+    "applies_to_policy": "POL-MRI-LUMBAR-V2",
+    "plans": ["PPO-GOLD"],
+    "criterion_id": "C-02",
+    "override": {"value": 2},
+    "effective_start": "2025-01-01",
+    "effective_end": "2025-12-31",
+    "section": "E1",
+    "text": "Temporary PPO-GOLD exception: conservative treatment requirement reduced to 2 weeks during the 2025 therapy-provider shortage. Effective 2025-01-01 through 2025-12-31. Expired."
+  }
+]

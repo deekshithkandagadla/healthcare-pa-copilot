@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-008",
+  "patient_id": "PT-008",
+  "service_code": "72148",
+  "service_date": "2026-10-31",
+  "requested_by": "Synthetic Emergency Department",
+  "summary": "Urgent lumbar MRI with red-flag symptoms",
+  "scenario": "red_flag"
+}

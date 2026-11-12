@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-005",
+  "patient_id": "PT-005",
+  "service_code": "72148",
+  "service_date": "2026-10-12",
+  "requested_by": "Synthetic Primary Care Clinic",
+  "summary": "Lumbar MRI; therapy records and imaging history conflict",
+  "scenario": "agent_disagreement"
+}
