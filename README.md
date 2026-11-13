@@ -9,13 +9,19 @@ issues a denial: it can only recommend `MEETS_CRITERIA`, `MORE_INFORMATION_NEEDE
 
 ## Quick start
 
+Requires Python 3.11 or newer (tested on 3.11 and 3.13).
+
 ```bash
-python -m venv .venv && source .venv/bin/activate
+python -m venv .venv
+source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
 pytest                               # 62 tests
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
+
+On Windows, run the commands in Git Bash (or WSL). Stop the services with Ctrl+C; if a port
+stays busy afterwards, close that terminal window.
 
 Or with Docker: `docker compose up --build`, then open http://localhost:8100.
 

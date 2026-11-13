@@ -26,9 +26,9 @@ async def main(ids):
     llm = get_llm()
     if llm is None:
         sys.exit("Set ANTHROPIC_API_KEY (and LLM_PROVIDER=anthropic).")
-    labels = {l["case_id"]: l for l in json.loads((DATA / "labels.json").read_text())}
+    labels = {l["case_id"]: l for l in json.loads((DATA / "labels.json").read_text(encoding="utf-8"))}
     for cid in ids:
-        case = json.loads((DATA / "cases" / f"{cid}.json").read_text())
+        case = json.loads((DATA / "cases" / f"{cid}.json").read_text(encoding="utf-8"))
         r, _, _ = await Supervisor(mcp, a2a=None, llm=llm).run(case)
         ok = r.recommendation == labels[cid]["expected_recommendation"]
         print(f"\n{'PASS' if ok else 'FAIL'} {cid}: {r.recommendation}  (summary: {r.summary_source})")

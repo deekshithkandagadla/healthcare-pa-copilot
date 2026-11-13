@@ -65,7 +65,7 @@ async def test_all_citations_resolve(supervisor, cid):
 def test_tampered_quote_is_caught():
     ev = Evidence(evidence_id="NOTE-001#Subjective@106", source_type="note", source_id="NOTE-001",
                   quote="Completed 12 weeks of physical therapy.")
-    notes = {"NOTE-001": (get_index() and open("data/notes/NOTE-001.md").read())}
+    notes = {"NOTE-001": (get_index() and open("data/notes/NOTE-001.md", encoding="utf-8").read())}
     assert verify_citations({ev.evidence_id: ev}, notes, set(), get_index())
 
 

@@ -76,7 +76,7 @@ class SearchResult(BaseModel):
 
 
 def load_policy_md(path: Path) -> tuple[dict, list[Chunk]]:
-    raw = path.read_text()
+    raw = path.read_text(encoding="utf-8").replace("\r\n", "\n")
     _, fm, body = raw.split("---", 2)
     meta = json.loads(fm)
     chunks: list[Chunk] = []
@@ -103,7 +103,7 @@ def load_policy_md(path: Path) -> tuple[dict, list[Chunk]]:
 
 
 def load_exceptions(path: Path) -> tuple[list[dict], list[Chunk]]:
-    items = json.loads(path.read_text())
+    items = json.loads(path.read_text(encoding="utf-8"))
     chunks = [Chunk(
         chunk_id=f"{e['exception_id']}#{e['section']}", doc_id=e["exception_id"], doc_type="exception_json",
         section=e["section"], heading=f"Exception {e['exception_id']}", text=e["text"],

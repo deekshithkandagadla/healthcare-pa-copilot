@@ -101,9 +101,9 @@ class Builder:
     def write(self):
         bundle = {"resourceType": "Bundle", "type": "collection", "id": f"BUNDLE-{self.pid}",
                   "entry": [{"resource": r} for r in self.resources]}
-        (ROOT / "fhir" / f"{self.pid}.json").write_text(json.dumps(bundle, indent=2))
+        (ROOT / "fhir" / f"{self.pid}.json").write_text(json.dumps(bundle, indent=2), encoding="utf-8")
         for note_id, text in self.notes:
-            (ROOT / "notes" / f"{note_id}.md").write_text(text)
+            (ROOT / "notes" / f"{note_id}.md").write_text(text, encoding="utf-8")
 
 
 def build() -> tuple[list[dict], list[dict], list[dict]]:
@@ -385,9 +385,9 @@ def main():
             f.unlink()
     cases, auths, labels = build()
     for c in cases:
-        (ROOT / "cases" / f"{c['case_id']}.json").write_text(json.dumps(c, indent=2))
-    (ROOT / "auth_history.json").write_text(json.dumps(auths, indent=2))
-    (ROOT / "labels.json").write_text(json.dumps(labels, indent=2))
+        (ROOT / "cases" / f"{c['case_id']}.json").write_text(json.dumps(c, indent=2), encoding="utf-8")
+    (ROOT / "auth_history.json").write_text(json.dumps(auths, indent=2), encoding="utf-8")
+    (ROOT / "labels.json").write_text(json.dumps(labels, indent=2), encoding="utf-8")
     print(f"Wrote {len(cases)} cases, {len(auths)} prior authorizations.")
 
 

@@ -25,7 +25,7 @@ class LocalFhirStore:
         self.data_dir = data_dir
         self._by_patient: dict[str, list[dict]] = {}
         for f in sorted((data_dir / "fhir").glob("*.json")):
-            bundle = json.loads(f.read_text())
+            bundle = json.loads(f.read_text(encoding="utf-8"))
             pid = f.stem
             self._by_patient[pid] = [e["resource"] for e in bundle["entry"]]
 
@@ -38,10 +38,10 @@ class LocalFhirStore:
         path = self.data_dir / "notes" / f"{note_id}.md"
         if not path.resolve().is_relative_to((self.data_dir / "notes").resolve()) or not path.exists():
             raise FileNotFoundError(note_id)
-        return path.read_text()
+        return path.read_text(encoding="utf-8").replace("\r\n", "\n")
 
     def auth_history(self) -> list[dict]:
-        return json.loads((self.data_dir / "auth_history.json").read_text())
+        return json.loads((self.data_dir / "auth_history.json").read_text(encoding="utf-8"))
 
 
 class HttpFhirStore:

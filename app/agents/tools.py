@@ -34,7 +34,10 @@ class McpTools:
 
     async def __aenter__(self):
         self._client = Client(self.target)
-        await asyncio.wait_for(self._client.__aenter__(), timeout=self.timeout)
+        # asyncio.timeout (not wait_for): wait_for runs the coroutine in a new task on Python 3.11,
+        # and the MCP client's cancel scopes must be entered and exited in the same task.
+        async with asyncio.timeout(self.timeout):
+            await self._client.__aenter__()
         return self
 
     async def __aexit__(self, *exc):
@@ -53,7 +56,8 @@ class McpTools:
         record = {"tool": name, "agent": agent, "args": args, "ok": False}
         self.calls.append(record)
         try:
-            res = await asyncio.wait_for(self._client.call_tool(name, args), timeout=self.timeout)
+            async with asyncio.timeout(self.timeout):
+                res = await self._client.call_tool(name, args)
             ms = round((time.perf_counter() - t0) * 1000, 1)
             text = res.content[0].text if res.content else "{}"
             if res.is_error:

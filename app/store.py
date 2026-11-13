@@ -42,7 +42,7 @@ class CaseStore:
         self.audit: list[dict] = []
         self.persist = persist
         for f in sorted((config.DATA_DIR / "cases").glob("*.json")):
-            c = json.loads(f.read_text())
+            c = json.loads(f.read_text(encoding="utf-8"))
             self.cases[c["case_id"]] = CaseState(case=c)
 
     def log(self, case_id: str, actor: str, action: str, **detail) -> dict:
@@ -51,7 +51,7 @@ class CaseStore:
         self.audit.append(entry)
         if self.persist:
             config.RUNTIME_DIR.mkdir(parents=True, exist_ok=True)
-            with open(config.RUNTIME_DIR / "audit.jsonl", "a") as fh:
+            with open(config.RUNTIME_DIR / "audit.jsonl", "a", encoding="utf-8") as fh:
                 fh.write(json.dumps(entry) + "\n")
         return entry
 

@@ -15,11 +15,11 @@ from app.services.coverage_a2a import create_app  # noqa: E402
 from app.services.mcp_server import mcp  # noqa: E402
 
 DATA = Path(__file__).resolve().parents[1] / "data"
-LABELS = {l["case_id"]: l for l in json.loads((DATA / "labels.json").read_text())}
+LABELS = {l["case_id"]: l for l in json.loads((DATA / "labels.json").read_text(encoding="utf-8"))}
 
 
 def load_case(cid: str) -> dict:
-    return json.loads((DATA / "cases" / f"{cid}.json").read_text())
+    return json.loads((DATA / "cases" / f"{cid}.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture
