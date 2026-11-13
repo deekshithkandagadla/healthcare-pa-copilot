@@ -34,6 +34,20 @@ flowchart LR
 6. **Fail safe.** Tool budget, per-call timeouts, a bounded retry and an A2A fallback. If the
    pipeline cannot finish, the result is `MORE_INFORMATION_NEEDED` with no findings.
 
+## LLM layer (Anthropic Claude)
+
+`app/llm.py`. The model is used where language understanding helps (reading notes, writing the
+summary), and it is kept out of the decision:
+
+| Step | Model's job | Verified in code | If it fails |
+|---|---|---|---|
+| Fact extraction | Read one note, return JSON items with verbatim quotes | Allowed kind and type, quote found verbatim, number present in the quote, negation check | Retry once, then use the rule-based extractor for that note |
+| Union with rules | Adds facts the rules missed | Same checks | Rules alone |
+| Summary | 3–6 sentences from structured findings only (no demographics) | Cited IDs exist and are not quarantined, states the recommendation, no approve/deny wording | Template summary |
+
+Hybrid extraction (rules ∪ verified LLM items) means a model outage or bad output can only
+reduce recall back to the rule baseline. It can never add an unverified fact.
+
 ## Protocol boundaries
 
 | Protocol | Where | What is real | Simplified |
@@ -47,5 +61,6 @@ flowchart LR
 ## Known limitations (so far)
 
 - The default semantic scorer is LSA (offline). A neural embedder is available with `EMBEDDINGS=sentence-transformers`.
-- Note extraction is rule-based and tuned to the synthetic notes. The LLM extractor is the next step.
+- The rule-based extractor is tuned to the synthetic notes. The LLM extractor generalizes better, but its output is non-deterministic (this SDK version exposes no sampling controls), so evaluation reports results for both modes.
+- Quote verification proves that a quote exists, not that the model labeled it correctly. The number and negation checks catch common mislabels, not all of them.
 - One service (lumbar MRI) and one policy family. State is kept in memory, with the audit trail written to JSONL.

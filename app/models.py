@@ -65,6 +65,8 @@ class PAResult(BaseModel):
     summary: str = ""
     evidence: dict[str, Evidence] = Field(default_factory=dict)
     agent_status: list[AgentStatus] = Field(default_factory=list)
+    summary_source: Literal["template", "llm"] = "template"
+    llm_usage: dict | None = None
     disclaimer: str = ("Decision support only. This is not a coverage determination. "
                        "A licensed reviewer makes the final decision.")
 

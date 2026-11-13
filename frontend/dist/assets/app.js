@@ -87,7 +87,7 @@ const CATALOG = {
   RecommendationBanner: (p) => `<div class="banner"><div class="rec"><span class="pill r-${esc(p.recommendation)}">${esc(p.recommendation)}</span>
       ${p.red_flag ? '<span class="pill s-NOT_SUPPORTED">RED FLAG · EXPEDITE</span>' : ""}</div>
       <div class="muted">Policy ${esc(p.policy_id)} · ${p.requires_human_review ? "human review required" : "no open issues"}</div>
-      <p>${esc(p.summary)}</p><div class="muted" style="font-size:12px">${esc(p.disclaimer)}</div></div>`,
+      <p>${p.summary_source === "llm" ? '<span class="pill">AI summary · citations verified</span> ' : ""}${esc(p.summary)}</p><div class="muted" style="font-size:12px">${esc(p.disclaimer)}</div></div>`,
   AlertList: (p) => `<div class="alert ${esc(p.severity)}"><b>${esc(p.title)}</b><ul>${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`,
   CriteriaChecklist: (p) => `<h3>${esc(p.title)}</h3><table><tr><th>Criterion</th><th>Status</th><th>Evidence</th></tr>${p.items.map((i) => `
       <tr><td><b>${esc(i.criterion_id)}</b> ${esc(i.description)}<div class="muted">${esc(i.rationale)}</div></td>

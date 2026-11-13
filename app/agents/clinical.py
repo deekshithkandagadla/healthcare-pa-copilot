@@ -12,6 +12,7 @@ from app import config
 from app.agents.extract import ParsedNote, Statement, extract_statements, parse_note
 from app.agents.tools import McpTools
 from app.models import Evidence, Fact
+from app.llm import LLM, Usage, llm_extract, merge
 from app.security import detect_injection
 
 AGENT = "clinical_evidence"
@@ -37,8 +38,10 @@ def _weeks(a: date, b: date) -> float:
 
 
 class ClinicalEvidenceAgent:
-    def __init__(self, tools: McpTools):
+    def __init__(self, tools: McpTools, llm: LLM | None = None, usage: Usage | None = None):
         self.tools = tools
+        self.llm = llm
+        self.usage = usage or Usage()
 
     async def run(self, case: dict) -> ClinicalOutput:
         out = ClinicalOutput()
@@ -65,7 +68,18 @@ class ClinicalEvidenceAgent:
                 continue
             p = parse_note(n)
             parsed.append(p)
-            statements += extract_statements(p)
+            rule_st = extract_statements(p)
+            if self.llm:
+                # Quarantined notes never reach the model. Model output is verified before use;
+                # if it is unusable, this note falls back to the rule-based extractor.
+                llm_st = await llm_extract(p, self.llm, self.usage)
+                if llm_st is None:
+                    out.ambiguities.append(f"LLM extraction failed for {p.note_id}; rule-based extraction used")
+                    statements += rule_st
+                else:
+                    statements += merge(rule_st, llm_st)
+            else:
+                statements += rule_st
         note_date = {p.note_id: date.fromisoformat(p.date) for p in parsed}
 
         def cite(st: Statement) -> str:

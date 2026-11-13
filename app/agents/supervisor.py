@@ -17,6 +17,7 @@ from app.agents.criteria import evaluate, verify_citations
 from app.agents.policy import PolicyAgent
 from app.agents.tools import McpTools, ToolBudgetExceeded, ToolError
 from app.agui import EventEmitter, Sink
+from app.llm import LLM, Usage, get_llm, llm_summary
 from app.models import AgentStatus, CriterionResult, Evidence, Fact, PAResult
 from app.retrieval.index import PolicyIndex, get_index
 
@@ -28,7 +29,8 @@ REVIEWABLE_FACTS = {
 
 class Supervisor:
     def __init__(self, mcp_target: Any, a2a: A2AClient | None = None, index: PolicyIndex | None = None,
-                 sink: Sink | None = None):
+                 sink: Sink | None = None, llm: LLM | None | str = "auto"):
+        self.llm = get_llm() if llm == "auto" else llm
         self.mcp_target = mcp_target
         self.a2a = a2a
         self.index = index or get_index()
@@ -89,6 +91,14 @@ class Supervisor:
                 await emitter.custom("mcp_tools_discovered", await tools.list_tools())
                 result = await self._investigate(case, reviewer_inputs or [], tools, emitter, status,
                                                  uncertainties, contradictions)
+                if self.llm:
+                    await emitter.step("llm_summary")
+                    text = await llm_summary(result, self.llm, self._usage)
+                    if text:
+                        result = result.model_copy(update={"summary": text, "summary_source": "llm"})
+                    await emitter.step("llm_summary", started=False)
+                    result = result.model_copy(update={"llm_usage": self._usage.as_dict()})
+                    await emitter.custom("llm_usage", self._usage.as_dict())
         except Exception as e:  # MCP server down, budget exhausted, unexpected error -> safe fallback
             await emitter.run_error(f"Investigation could not complete: {type(e).__name__}: {e}", code="SAFE_FALLBACK")
             result = PAResult(case_id=case["case_id"], recommendation="MORE_INFORMATION_NEEDED",
@@ -106,7 +116,9 @@ class Supervisor:
         # 1) clinical + coverage in parallel
         await emitter.step("clinical_evidence")
         await emitter.step("coverage_eligibility")
-        clinical_task = self._with_retry("clinical_evidence", lambda: ClinicalEvidenceAgent(tools).run(case), emitter)
+        self._usage = Usage()
+        clinical_task = self._with_retry("clinical_evidence",
+                                         lambda: ClinicalEvidenceAgent(tools, self.llm, self._usage).run(case), emitter)
         coverage_task = self._coverage(case, tools, emitter, status)
         clinical_res, coverage = await asyncio.gather(clinical_task, coverage_task, return_exceptions=True)
         if isinstance(clinical_res, BaseException):

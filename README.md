@@ -13,13 +13,34 @@ issues a denial: it can only recommend `MEETS_CRITERIA`, `MORE_INFORMATION_NEEDE
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 43 tests
+pytest                               # 62 tests
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
 
 Or with Docker: `docker compose up --build`, then open http://localhost:8100.
 
-No API key is needed. The default pipeline is deterministic so the evaluation is reproducible.
+No API key is needed: without one, the pipeline runs rule-based and fully deterministic.
+
+### Turning on Claude (Anthropic)
+
+```bash
+cp .env.example .env            # add ANTHROPIC_API_KEY; never commit .env
+export $(grep -v '^#' .env | xargs)
+python scripts/llm_smoke.py     # live check on PA-001, PA-003, PA-004
+scripts/run_all.sh              # the UI now shows "AI summary · citations verified"
+```
+
+With `LLM_PROVIDER=anthropic`, Claude (default `claude-sonnet-5-5`, set `LLM_MODEL` to change)
+does two jobs: it extracts facts from clinical notes, and it writes the reviewer summary. The model
+never decides the recommendation. Its output is checked in code before use:
+
+- Every extracted fact must quote the note verbatim, and a numeric value must appear in its quote.
+- Negated findings (for example "Denies saddle anesthesia") cannot become red flags.
+- Invalid JSON is retried once. After that, the note falls back to the rule-based extractor.
+- Quarantined (injected) documents are never sent to the model.
+- A summary is rejected, and the template used instead, if it cites unknown or quarantined
+  evidence, omits the recommendation, or reads as an approval or denial.
+- Token usage is recorded per case. Dollar cost is reported only if you set the per-token prices in `.env`.
 
 ## Services
 
@@ -60,10 +81,9 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, and 43 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 62 tests.
 
-Next: an optional LLM layer (fact extraction checked by the same quote verification, plus the reviewer
-summary), an evaluation runner and report (accuracy, retrieval, latency, token cost), the full
+Next: an evaluation runner and report (accuracy, retrieval, latency, token cost), the full
 architecture note, and the demo video.
 
 See `docs/ARCHITECTURE.md` for design decisions and known limitations.

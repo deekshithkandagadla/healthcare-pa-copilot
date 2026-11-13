@@ -20,6 +20,7 @@ class RecommendationBanner(BaseModel):
     requires_human_review: bool
     red_flag: bool = False
     summary: str
+    summary_source: Literal["template", "llm"] = "template"
     disclaimer: str
 
 
@@ -120,7 +121,8 @@ def build_surface(result: PAResult, policy: dict | None) -> list[dict]:
     comps = [component("banner", "RecommendationBanner", {
         "recommendation": result.recommendation, "policy_id": result.applicable_policy_id,
         "requires_human_review": result.requires_human_review, "red_flag": result.red_flag_pathway,
-        "summary": result.summary, "disclaimer": result.disclaimer})]
+        "summary": result.summary, "summary_source": result.summary_source,
+        "disclaimer": result.disclaimer})]
     children = ["banner"]
 
     if result.security_flags:
