@@ -79,7 +79,8 @@ _RULES: list[tuple[str, str, object]] = [
     ("no_prior_imaging", r"no prior imaging", False),
     ("prior_mri", r"prior (?:lumbar )?mri", True),
 ]
-_COMPILED = [(k, re.compile(rx, re.IGNORECASE), v) for k, rx, v in _RULES]
+# Notes wrap lines anywhere, so a space in a pattern matches any run of whitespace.
+_COMPILED = [(k, re.compile(rx.replace(" ", r"\s+"), re.IGNORECASE), v) for k, rx, v in _RULES]
 
 
 def _sentence_bounds(text: str, pos: int, end_pos: int) -> tuple[int, int]:

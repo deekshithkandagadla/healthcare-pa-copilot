@@ -49,3 +49,10 @@ async def test_stale_record_not_counted(supervisor):
     assert any("stale" in u for u in r.uncertainties)
     c02 = next(c for c in r.criteria if c.criterion_id == "C-02")
     assert not any(e.startswith("NOTE-003") for e in c02.evidence_ids)
+
+
+async def test_note_claim_wrapped_across_lines_is_extracted(supervisor):
+    # NOTE-001 wraps "Completed 8 weeks of / physical therapy" across two lines.
+    r, _, _ = await supervisor.run(load_case("PA-001"))
+    c02 = next(c for c in r.criteria if c.criterion_id == "C-02")
+    assert any(e.startswith("NOTE-001#") for e in c02.evidence_ids) and "note claims [8]" in c02.rationale
