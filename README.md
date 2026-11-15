@@ -30,8 +30,7 @@ No API key is needed: without one, the pipeline runs rule-based and fully determ
 ### Turning on Claude (Anthropic)
 
 ```bash
-cp .env.example .env            # add ANTHROPIC_API_KEY; never commit .env
-export $(grep -v '^#' .env | xargs)
+cp .env.example .env            # then paste your key after ANTHROPIC_API_KEY= (.env is gitignored)
 python scripts/llm_smoke.py     # live check on PA-001, PA-003, PA-004
 scripts/run_all.sh              # the UI now shows "AI summary · citations verified"
 ```

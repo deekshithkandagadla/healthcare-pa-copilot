@@ -74,7 +74,7 @@ class AnthropicLLM:
 
 
 def get_llm() -> LLM | None:
-    if config.LLM_PROVIDER == "anthropic" and os.getenv("ANTHROPIC_API_KEY"):
+    if os.getenv("LLM_PROVIDER", config.LLM_PROVIDER) == "anthropic" and os.getenv("ANTHROPIC_API_KEY"):
         return AnthropicLLM()
     return None
 

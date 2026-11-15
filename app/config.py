@@ -5,6 +5,24 @@ import os
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def _load_dotenv(path: Path = ROOT / ".env") -> None:
+    """Load KEY=VALUE lines from .env (gitignored). Real environment variables win.
+    Strips quotes and Windows line endings so a key saved from Notepad still works."""
+    if not path.exists():
+        return
+    for line in path.read_text(encoding="utf-8-sig").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, value = line.split("=", 1)
+        value = value.strip().strip('"').strip("'")
+        if value:
+            os.environ.setdefault(key.strip(), value)
+
+
+_load_dotenv()
 DATA_DIR = Path(os.getenv("PA_DATA_DIR", ROOT / "data"))
 RUNTIME_DIR = Path(os.getenv("PA_RUNTIME_DIR", ROOT / ".runtime"))
 
