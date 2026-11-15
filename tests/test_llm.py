@@ -164,3 +164,28 @@ async def test_anthropic_client_parses_api_response():
     text, usage = await llm.complete("sys", "user")
     assert text == "[]" and usage == {"input_tokens": 321, "output_tokens": 4}
     assert llm.model == "claude-sonnet-5-5"
+
+
+@pytest.mark.parametrize("raw", [
+    '[{"kind": "pt_weeks_claim", "value": 7, "quote": "Attended PT twice weekly for 7 weeks at the county clinic."}]\n\nNote: nothing else applies.',
+    '```json\n[{"kind": "pt_weeks_claim", "value": 7, "quote": "Attended PT twice weekly for 7 weeks at the county clinic."}]\n```',
+    '[{"kind": "pt_weeks_claim", "value": 7, "quote": "Attended PT twice weekly for 7 weeks at the county clinic."}]\n[]',
+])
+async def test_trailing_text_after_json_is_tolerated(raw):
+    # Seen live: Claude returned a valid array followed by extra data ("Extra data" JSON error).
+    from app.agents.extract import ParsedNote
+    text = "## Subjective\nAttended PT twice weekly for 7 weeks at the county clinic.\n"
+    note = ParsedNote("NOTE-X", "2026-10-01", "", "ehr", text, [("Subjective", 0, len(text))])
+
+    class Raw:
+        async def complete(self, *a, **k):
+            return raw, {"input_tokens": 1, "output_tokens": 1}
+    usage = Usage()
+    st = await llm_extract(note, Raw(), usage)
+    assert [(s.kind, s.value) for s in st] == [("pt_weeks_claim", 7)] and usage.calls == 1
+
+
+def test_summary_markdown_is_stripped():
+    from app.llm import clean_summary
+    out = clean_summary("**Summary for PA-001:** The system recommendation is MEETS_CRITERIA.\n\nAll four criteria are supported [X-1].")
+    assert out == "Summary for PA-001: The system recommendation is MEETS_CRITERIA. All four criteria are supported [X-1]."

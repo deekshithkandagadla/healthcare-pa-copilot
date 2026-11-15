@@ -8,12 +8,16 @@ output that verification rejected.
 """
 import asyncio
 import json
+import logging
 import os
 import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 os.environ.setdefault("LLM_PROVIDER", "anthropic")
+logging.basicConfig(level=logging.WARNING)
+for name in ("httpx", "httpx2", "anthropic"):
+    logging.getLogger(name).setLevel(logging.WARNING)
 
 from app import config  # noqa: E402  (loads .env)
 from app.agents.supervisor import Supervisor  # noqa: E402

@@ -113,10 +113,11 @@ _FIXED = {"radic_pos": True, "radic_neg": False, "no_prior_imaging": False, "pri
 
 
 def _parse_json_array(text: str) -> list:
-    m = re.search(r"\[.*\]", text, re.DOTALL)
-    if not m:
+    """Parse the first complete JSON array; ignore code fences and any text after it."""
+    start = text.find("[")
+    if start < 0:
         raise ValueError("no JSON array in response")
-    data = json.loads(m.group(0))
+    data, _ = json.JSONDecoder().raw_decode(text[start:])
     if not isinstance(data, list):
         raise ValueError("response is not a JSON array")
     return data
@@ -189,7 +190,8 @@ def merge(rule_st: list[Statement], llm_st: list[Statement]) -> list[Statement]:
 
 # ------------------------------------------------------------------ summary
 SUMMARY_SYSTEM = """You write a short summary for a utilization-management nurse reviewing a prior
-authorization. Use ONLY the findings given. 3 to 6 sentences, plain language.
+authorization. Use ONLY the findings given. Plain text only: no markdown, headings, bold or
+bullets. 3 to 5 sentences, at most 120 words, plain language.
 Rules: state the system recommendation exactly as given; cite evidence IDs in square brackets,
 only IDs from the list provided; never say a request is approved or denied (a human decides);
 mention missing information, contradictions and quarantined documents if present; no diagnosis."""
@@ -235,8 +237,17 @@ async def llm_summary(result, llm: LLM, usage: Usage) -> str | None:
     except Exception as e:
         usage.failures.append(f"summary: {type(e).__name__}: {e}")
         return None
-    problems = check_summary(text.strip(), result)
+    text = clean_summary(text)
+    problems = check_summary(text, result)
     if problems:
         usage.rejected_items.append("summary rejected: " + "; ".join(problems))
         return None
-    return text.strip()
+    return text
+
+
+def clean_summary(text: str) -> str:
+    """Strip markdown the UI would show literally, and join paragraphs."""
+    text = re.sub(r"^\s*#+\s*", "", text, flags=re.MULTILINE)
+    text = re.sub(r"(\*\*|__)(.+?)\1", r"\2", text)
+    text = re.sub(r"^\s*[-*]\s+", "", text, flags=re.MULTILINE)
+    return re.sub(r"\s*\n+\s*", " ", text).strip()
