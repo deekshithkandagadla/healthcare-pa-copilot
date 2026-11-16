@@ -98,3 +98,24 @@ def test_agui_stream_ends_with_run_finished_after_a2ui():
     types = [e["type"] for e in ev]
     assert types[0] == "RUN_STARTED" and types[-1] == "RUN_FINISHED"
     assert any(e["type"] == "CUSTOM" and e["name"] == "a2ui" for e in ev)
+
+
+def test_submit_new_case_and_investigate():
+    from app.api import app
+    c = TestClient(app)
+    pts = c.get("/api/patients").json()
+    assert pts["patients"] and set(pts["patients"][0]) == {"patient_id", "sex", "age"}   # no names / DOB
+    assert c.post("/api/cases", json={"patient_id": "PT-999", "service_date": "2026-10-01"}).status_code == 422
+    assert c.post("/api/cases", json={"patient_id": "PT-001", "service_date": "10/01/2026"}).status_code == 422
+    assert c.post("/api/cases", json={"patient_id": "PT-001", "service_code": "99999",
+                                      "service_date": "2026-10-01"}).status_code == 422
+    # Same patient as PA-002 but a date after V3 took effect -> V3 governs and C-02/C-03 change.
+    new = c.post("/api/cases", json={"patient_id": "PT-002", "service_date": "2026-04-15"}).json()
+    assert new["case_id"].startswith("PA-1")
+    _run(c, new["case_id"])
+    res = c.get(f"/api/cases/{new['case_id']}").json()["result"]
+    assert res["applicable_policy_id"] == "POL-MRI-LUMBAR-V3"
+    assert res["recommendation"] == "DOES_NOT_APPEAR_TO_MEET_CRITERIA"   # no PT, no radicular findings
+    assert res["requires_human_review"]
+    assert [a["action"] for a in c.get(f"/api/cases/{new['case_id']}/audit").json()] == ["case_submitted",
+                                                                                         "investigation_completed"]

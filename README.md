@@ -16,7 +16,7 @@ python -m venv .venv
 source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 74 tests
+pytest                               # 75 tests
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
 
@@ -81,6 +81,9 @@ never decides the recommendation. Its output is checked in code before use:
 | PA-008 | Cauda equina red flags | Red-flag bypass, expedite |
 | PA-009 | Criteria met, but a non-MRI-conditional pacemaker is documented | Exclusion X-01 → SPECIALIST_REVIEW (physician), never an automated not-met |
 
+New case: click **+ New case**, pick a synthetic patient and a service date, and create it. For example,
+PT-002 with service date 2026-04-15 is the PA-002 patient after Version 3 took effect, and the outcome changes.
+
 Human review (scenario 7): run PA-003, enter "7 weeks" plus a source in the form, and re-run.
 The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidence (`REVIEW/...`) in the audit trail.
 
@@ -88,7 +91,7 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 74 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 75 tests.
 
 Next: an evaluation runner and report (accuracy, retrieval, latency, token cost), the full
 architecture note, and the demo video.

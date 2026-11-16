@@ -11,6 +11,7 @@ from __future__ import annotations
 import asyncio
 import json
 import logging
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -57,6 +58,49 @@ def _case_summary(st) -> dict:
 def health():
     return {"status": "ok", "mcp": "remote" if config.MCP_URL else "in-process",
             "a2a": "remote" if config.COVERAGE_A2A_URL else "in-process"}
+
+
+SUPPORTED_SERVICES = {"72148": "MRI lumbar spine without contrast"}
+
+
+def _patients() -> dict[str, dict]:
+    """Synthetic patients available for new cases: ID, sex, age only (no names or birth dates)."""
+    out = {}
+    for f in sorted((config.DATA_DIR / "fhir").glob("PT-*.json")):
+        pt = next(e["resource"] for e in json.loads(f.read_text(encoding="utf-8"))["entry"]
+                  if e["resource"]["resourceType"] == "Patient")
+        b = date.fromisoformat(pt["birthDate"])
+        t = date.today()
+        out[f.stem] = {"patient_id": f.stem, "sex": pt.get("gender"),
+                       "age": t.year - b.year - ((t.month, t.day) < (b.month, b.day))}
+    return out
+
+
+@app.get("/api/patients")
+def list_patients():
+    return {"patients": list(_patients().values()), "services": SUPPORTED_SERVICES}
+
+
+class NewCase(BaseModel):
+    patient_id: str
+    service_code: str = "72148"
+    service_date: str
+    summary: str = ""
+
+
+@app.post("/api/cases", status_code=201)
+def submit_case(body: NewCase):
+    if body.patient_id not in _patients():
+        raise HTTPException(422, f"Unknown synthetic patient {body.patient_id}")
+    if body.service_code not in SUPPORTED_SERVICES:
+        raise HTTPException(422, f"Service {body.service_code} is not supported; use one of {list(SUPPORTED_SERVICES)}")
+    try:
+        sd = date.fromisoformat(body.service_date)
+    except ValueError:
+        raise HTTPException(422, "service_date must be YYYY-MM-DD")
+    if not date(2024, 1, 1) <= sd <= date(2027, 12, 31):
+        raise HTTPException(422, "service_date must be between 2024-01-01 and 2027-12-31")
+    return store.submit_case(body.patient_id, body.service_code, sd.isoformat(), body.summary.strip()[:200])
 
 
 @app.get("/api/cases")

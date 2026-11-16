@@ -17,7 +17,17 @@
     </select></label>
 </header>
 <main>
-  <aside id="cases"><h2>Cases</h2><ul id="case-list"></ul></aside>
+  <aside id="cases">
+    <div class="row"><h2>Cases</h2><button class="secondary" id="new-case-btn">+ New case</button></div>
+    <form id="new-case" hidden>
+      <label>Synthetic patient</label><select name="patient_id" id="nc-patient"></select>
+      <label>Service</label><select name="service_code" id="nc-service"></select>
+      <label>Service date</label><input type="date" name="service_date" required>
+      <label>Summary (optional)</label><input type="text" name="summary" maxlength="200">
+      <p><button type="submit">Create case</button> <span id="nc-msg" class="err"></span></p>
+    </form>
+    <ul id="case-list"></ul>
+  </aside>
   <section id="stream">
     <div class="row"><h2>Live agent activity <span class="muted">(AG-UI)</span></h2>
       <button id="run" disabled>Run investigation</button></div>

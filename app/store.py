@@ -55,6 +55,17 @@ class CaseStore:
                 fh.write(json.dumps(entry) + "\n")
         return entry
 
+    def submit_case(self, patient_id: str, service_code: str, service_date: str, summary: str,
+                    actor: str = "reviewer-demo") -> dict:
+        nums = [int(c[3:]) for c in self.cases if c[3:].isdigit()]
+        case_id = f"PA-{max([100] + [n for n in nums if n >= 100]) + 1:03d}"
+        case = {"case_id": case_id, "patient_id": patient_id, "service_code": service_code,
+                "service_date": service_date, "requested_by": "Submitted in UI (synthetic)",
+                "summary": summary or f"Lumbar MRI request for {patient_id}", "scenario": "user_submitted"}
+        self.cases[case_id] = CaseState(case=case)
+        self.log(case_id, actor, "case_submitted", patient_id=patient_id, service_date=service_date)
+        return case
+
     def get(self, case_id: str) -> CaseState:
         if case_id not in self.cases:
             raise KeyError(case_id)

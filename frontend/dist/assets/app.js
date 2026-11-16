@@ -163,6 +163,26 @@ async function loadAudit() {
     ${esc(x.recommendation || x.disposition || x.fact || "")}</li>`).join("");
 }
 
+// ------------------------------------------------------------------ new case
+$("#new-case-btn").onclick = async () => {
+  const f = $("#new-case");
+  f.hidden = !f.hidden;
+  if (!f.hidden && !$("#nc-patient").options.length) {
+    const d = await (await fetch("/api/patients")).json();
+    $("#nc-patient").innerHTML = d.patients.map((p) => `<option value="${esc(p.patient_id)}">${esc(p.patient_id)} · ${esc(p.sex)} · ${esc(p.age)}</option>`).join("");
+    $("#nc-service").innerHTML = Object.entries(d.services).map(([k, v]) => `<option value="${esc(k)}">${esc(k)} ${esc(v)}</option>`).join("");
+  }
+};
+$("#new-case").onsubmit = async (e) => {
+  e.preventDefault();
+  const body = Object.fromEntries(new FormData(e.target).entries());
+  const r = await fetch("/api/cases", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+  const d = await r.json();
+  if (!r.ok) { $("#nc-msg").textContent = d.detail; return; }
+  $("#nc-msg").textContent = ""; e.target.hidden = true; e.target.reset();
+  await select(d.case_id);
+};
+
 $("#run").onclick = investigate;
 $("#outage").onchange = (e) => fetch("/api/admin/outage", { method: "POST", headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ mode: e.target.value }) });

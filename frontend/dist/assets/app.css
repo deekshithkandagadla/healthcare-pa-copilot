@@ -48,3 +48,5 @@ input[type=number], input[type=text], textarea, select { font:inherit; padding:5
 .toggle { font-size:13px; }
 .toggle select { width:auto; margin-left:6px; }
 .err { color:var(--bad); }
+#new-case { border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:10px; background:var(--bg); }
+#new-case-btn { padding:3px 10px; font-size:12px; }
