@@ -74,13 +74,13 @@ sequenceDiagram
     COV->>MCP: check_eligibility, get_authorization_history
     COV-->>SUP: eligibility, plan, prior auths
   end
-  SUP->>SUP: compare agents (prior imaging); re-check once; escalate if still different
+  SUP->>SUP: compare agents on prior imaging, re-check once, escalate if still different
   SUP->>PR: run(case, plan)
   PR->>MCP: search_policies (hybrid, filtered by plan/service/date)
   PR-->>SUP: policy version + reason, exceptions, exclusions
   SUP->>CQ: evaluate(policy, facts, conflicts)
   CQ-->>SUP: criteria + exclusions, citation check
-  SUP->>SUP: decide, validate PAResult (fallback to SPECIALIST_REVIEW if invalid)
+  SUP->>SUP: decide and validate PAResult, SPECIALIST_REVIEW if invalid
   SUP-->>UI: CUSTOM a2ui (surfaceUpdate), RUN_FINISHED
 ```
 
