@@ -161,14 +161,20 @@ class PolicyIndex:
         self.dense = _StEmbedder(texts) if os.getenv("EMBEDDINGS") == "sentence-transformers" else _LsaEmbedder(texts)
 
     # ---- ranking -------------------------------------------------------------------------
-    def _rank(self, query: str) -> list[tuple[int, float, int, int]]:
+    def _rank(self, query: str, scorer: str = "hybrid") -> list[tuple[int, float, int, int]]:
+        """scorer: hybrid (RRF of both), bm25 (keyword only) or dense (semantic only; for ablations)."""
         bm = self.bm25.get_scores(tokenize(query))
         dn = self.dense.score(query)
-        bm_rank = {i: r for r, i in enumerate(np.argsort(-bm), start=1)}
-        dn_rank = {i: r for r, i in enumerate(np.argsort(-dn), start=1)}
-        fused = [(i, 1 / (self.RRF_K + bm_rank[i]) + 1 / (self.RRF_K + dn_rank[i]), bm_rank[i], dn_rank[i])
-                 for i in range(len(self.chunks))]
-        return sorted(fused, key=lambda x: -x[1])
+        bm_rank = {i: r for r, i in enumerate(np.argsort(-bm, kind="stable"), start=1)}
+        dn_rank = {i: r for r, i in enumerate(np.argsort(-dn, kind="stable"), start=1)}
+        def score(i):
+            if scorer == "bm25":
+                return 1 / (self.RRF_K + bm_rank[i])
+            if scorer == "dense":
+                return 1 / (self.RRF_K + dn_rank[i])
+            return 1 / (self.RRF_K + bm_rank[i]) + 1 / (self.RRF_K + dn_rank[i])
+        fused = [(i, score(i), bm_rank[i], dn_rank[i]) for i in range(len(self.chunks))]
+        return sorted(fused, key=lambda x: (-x[1], x[0]))
 
     def _exclusion_reason(self, c: Chunk, family, service_code, plan, service_date) -> str | None:
         if family and c.family != family:
@@ -183,8 +189,9 @@ class PolicyIndex:
         return None
 
     def search(self, query: str, *, service_code: str | None = None, plan: str | None = None,
-               service_date: str | None = None, family: str | None = None, k: int = 5) -> SearchResult:
-        ranked = self._rank(query)
+               service_date: str | None = None, family: str | None = None, k: int = 5,
+               scorer: str = "hybrid") -> SearchResult:
+        ranked = self._rank(query, scorer)
         hits, excluded = [], []
         for pos, (i, score, br, dr) in enumerate(ranked, start=1):
             c = self.chunks[i]

@@ -1,0 +1,166 @@
+[
+  {
+    "id": "Q01",
+    "query": "how many weeks of physical therapy are required",
+    "plan": "HMO-STD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S3.2"
+  },
+  {
+    "id": "Q02",
+    "query": "how many weeks of conservative treatment are required",
+    "plan": "HMO-STD",
+    "service_date": "2026-02-10",
+    "expected": "POL-MRI-LUMBAR-V2#S3.2"
+  },
+  {
+    "id": "Q03",
+    "query": "NSAIDs or home exercise instead of physical therapy",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-01-15",
+    "expected": "POL-MRI-LUMBAR-V2#S3.2"
+  },
+  {
+    "id": "Q04",
+    "query": "does medication only management count",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S3.2"
+  },
+  {
+    "id": "Q05",
+    "query": "saddle anesthesia urinary retention cauda equina",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-31",
+    "expected": "POL-MRI-LUMBAR-V3#S2"
+  },
+  {
+    "id": "Q06",
+    "query": "patient has a pacemaker, is MRI safe",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-16",
+    "expected": "POL-MRI-LUMBAR-V3#S5.1"
+  },
+  {
+    "id": "Q07",
+    "query": "MRI for a workers compensation claim",
+    "plan": "HMO-STD",
+    "service_date": "2026-09-01",
+    "expected": "POL-MRI-LUMBAR-V3#S5.2"
+  },
+  {
+    "id": "Q08",
+    "query": "reduced therapy requirement for rural members",
+    "plan": "HMO-RURAL",
+    "service_date": "2026-08-10",
+    "expected": "EXC-2026-RURAL-PT#E1"
+  },
+  {
+    "id": "Q09",
+    "query": "therapy provider shortage exception",
+    "plan": "PPO-GOLD",
+    "service_date": "2025-06-01",
+    "expected": "EXC-2025-GOLD-PT#E1"
+  },
+  {
+    "id": "Q10",
+    "query": "repeat imaging within twelve months",
+    "plan": "HMO-STD",
+    "service_date": "2026-10-12",
+    "expected": "POL-MRI-LUMBAR-V3#S3.4"
+  },
+  {
+    "id": "Q11",
+    "query": "pain radiating below the knee or positive straight leg raise",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-20",
+    "expected": "POL-MRI-LUMBAR-V3#S3.3"
+  },
+  {
+    "id": "Q12",
+    "query": "how long must symptoms last",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-20",
+    "expected": "POL-MRI-LUMBAR-V3#S3.1"
+  },
+  {
+    "id": "Q13",
+    "query": "what changed in the new version of the policy",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-20",
+    "expected": "POL-MRI-LUMBAR-V3#S1"
+  },
+  {
+    "id": "Q14",
+    "query": "lumbar spine MRI for low back pain after conservative treatment",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-20",
+    "note": "Version test: the superseded V2 is the closest text match and must lose",
+    "must_not_return_doc": "POL-MRI-LUMBAR-V2",
+    "expect_excluded_better_ranked": "POL-MRI-LUMBAR-V2"
+  },
+  {
+    "id": "Q15",
+    "query": "therapy shortage exception for gold plan",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "note": "Expired exception must never be returned",
+    "must_not_return_doc": "EXC-2025-GOLD-PT"
+  },
+  {
+    "id": "Q16",
+    "query": "physiotherapy duration",
+    "plan": "HMO-STD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S3.2",
+    "note": "synonym not in the policy text"
+  },
+  {
+    "id": "Q17",
+    "query": "sciatica shooting down the leg",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S3.3",
+    "note": "synonym not in the policy text"
+  },
+  {
+    "id": "Q18",
+    "query": "neurostimulator",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S5.1",
+    "note": "rare exact keyword"
+  },
+  {
+    "id": "Q19",
+    "query": "CPT 72148",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S1",
+    "note": "exact code"
+  },
+  {
+    "id": "Q20",
+    "query": "imaging needed for a lawsuit",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-01",
+    "expected": "POL-MRI-LUMBAR-V3#S5.2",
+    "note": "paraphrase of litigation"
+  },
+  {
+    "id": "Q21",
+    "query": "new bladder problems and numbness in the groin",
+    "plan": "PPO-GOLD",
+    "service_date": "2026-10-31",
+    "expected": "POL-MRI-LUMBAR-V3#S2",
+    "note": "lay description of red flags"
+  },
+  {
+    "id": "Q22",
+    "query": "MRI again because symptoms got worse",
+    "plan": "HMO-STD",
+    "service_date": "2026-10-12",
+    "expected": "POL-MRI-LUMBAR-V3#S3.4",
+    "note": "paraphrase"
+  }
+]

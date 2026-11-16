@@ -16,7 +16,8 @@ python -m venv .venv
 source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 75 tests
+pytest                               # 76 tests
+python scripts/evaluate.py           # evaluation report -> docs/EVALUATION.md (add --mode llm for Claude)
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
 
@@ -91,9 +92,11 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 75 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 76 tests.
 
-Next: an evaluation runner and report (accuracy, retrieval, latency, token cost), the full
-architecture note, and the demo video.
+Evaluation: `scripts/evaluate.py` scores all 9 labeled cases, 20 retrieval queries, 5 prompt-injection
+variants and 6 failure scenarios, and writes `docs/EVALUATION.md` with a full multi-agent trace.
+
+Next: the full architecture note and the demo video.
 
 See `docs/ARCHITECTURE.md` for design decisions and known limitations.

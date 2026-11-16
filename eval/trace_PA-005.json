@@ -1,0 +1,723 @@
+{
+  "case": {
+    "case_id": "PA-005",
+    "patient_id": "PT-005",
+    "service_code": "72148",
+    "service_date": "2026-10-12",
+    "requested_by": "Synthetic Primary Care Clinic",
+    "summary": "Lumbar MRI; therapy records and imaging history conflict",
+    "scenario": "agent_disagreement"
+  },
+  "result": {
+    "case_id": "PA-005",
+    "recommendation": "SPECIALIST_REVIEW",
+    "applicable_policy_id": "POL-MRI-LUMBAR-V3",
+    "policy_selection_reason": "POL-MRI-LUMBAR-V3 is in effect on the service date 2026-10-12 (2026-03-01 to open). Not used: POL-MRI-LUMBAR-V2: effective 2024-07-01 to 2026-02-28, does not cover 2026-10-12. Exceptions considered and not applied: EXC-2026-RURAL-PT: plan PPO-GOLD not eligible; EXC-2025-GOLD-PT: applies to POL-MRI-LUMBAR-V2, not POL-MRI-LUMBAR-V3.",
+    "exceptions_applied": [],
+    "red_flag_pathway": false,
+    "criteria": [
+      {
+        "criterion_id": "C-01",
+        "description": "Symptoms present for at least 6 weeks",
+        "status": "SUPPORTED",
+        "evidence_ids": [
+          "Condition/COND-005-01",
+          "NOTE-008#Subjective@106",
+          "POL-MRI-LUMBAR-V3#S3.1"
+        ],
+        "threshold": 6,
+        "observed": 26.4,
+        "rationale": "Observed 26.4 vs required >= 6. Condition onset 2026-04-10 to service date 2026-10-12",
+        "policy_section": "S3.1"
+      },
+      {
+        "criterion_id": "C-02",
+        "description": "At least 6 weeks of physical therapy completed within the 6 months before the request",
+        "status": "CONFLICTING",
+        "evidence_ids": [
+          "NOTE-008#Subjective@174",
+          "NOTE-007#Summary@117",
+          "NOTE-007#Summary@179",
+          "Encounter/ENC-005-03",
+          "Encounter/ENC-005-04",
+          "POL-MRI-LUMBAR-V3#S3.2"
+        ],
+        "threshold": 6,
+        "observed": null,
+        "rationale": "notes claim [8] weeks of therapy but only 2 dated therapy encounter week(s) are on record; a therapy discharge note reports non-attendance",
+        "policy_section": "S3.2"
+      },
+      {
+        "criterion_id": "C-03",
+        "description": "Radicular symptoms or objective neurological findings documented",
+        "status": "SUPPORTED",
+        "evidence_ids": [
+          "Condition/COND-005-02",
+          "NOTE-008#Subjective@106",
+          "NOTE-008#Objective@265",
+          "POL-MRI-LUMBAR-V3#S3.3"
+        ],
+        "threshold": true,
+        "observed": true,
+        "rationale": "Observed True vs required == True.",
+        "policy_section": "S3.3"
+      },
+      {
+        "criterion_id": "C-04",
+        "description": "No lumbar spine MRI in the prior 12 months unless there is a documented change in condition",
+        "status": "CONFLICTING",
+        "evidence_ids": [
+          "NOTE-008#Subjective@233",
+          "AUTH/AUTH-5501",
+          "POL-MRI-LUMBAR-V3#S3.4"
+        ],
+        "threshold": false,
+        "observed": null,
+        "rationale": "Clinical note says prior imaging = False; authorization history (AUTH-5501) says prior lumbar MRI within 12 months = True",
+        "policy_section": "S3.4"
+      }
+    ],
+    "exclusions": [
+      {
+        "exclusion_id": "X-01",
+        "description": "Implanted device that is not MRI-conditional, without documented device clearance",
+        "status": "NOT_DOCUMENTED",
+        "evidence_ids": [],
+        "policy_section": "S5.1"
+      },
+      {
+        "exclusion_id": "X-02",
+        "description": "Imaging requested solely for legal, litigation or workers' compensation documentation",
+        "status": "NOT_DOCUMENTED",
+        "evidence_ids": [],
+        "policy_section": "S5.2"
+      }
+    ],
+    "missing_information": [],
+    "uncertainties": [],
+    "contradictions": [
+      "Clinical note says prior imaging = False; authorization history (AUTH-5501) says prior lumbar MRI within 12 months = True",
+      "pt_weeks_recent: notes claim [8] weeks of therapy but only 2 dated therapy encounter week(s) are on record; a therapy discharge note reports non-attendance"
+    ],
+    "security_flags": [],
+    "requires_human_review": true,
+    "summary": "PA-005: specialist review under POL-MRI-LUMBAR-V3. C-01 supported (observed 26.4, required 6). C-02 conflicting. C-03 supported (observed True, required True). C-04 conflicting. Contradictions: Clinical note says prior imaging = False; authorization history (AUTH-5501) says prior lumbar MRI within 12 months = True; pt_weeks_recent: notes claim [8] weeks of therapy but only 2 dated therapy encounter week(s) are on record; a therapy discharge note reports non-attendance.",
+    "evidence": {
+      "Condition/COND-005-01": {
+        "evidence_id": "Condition/COND-005-01",
+        "source_type": "fhir",
+        "source_id": "Condition/COND-005-01",
+        "section": null,
+        "quote": "M54.50 onset 2026-04-10",
+        "date": "2026-04-10",
+        "quarantined": false
+      },
+      "NOTE-008#Subjective@106": {
+        "evidence_id": "NOTE-008#Subjective@106",
+        "source_type": "note",
+        "source_id": "NOTE-008",
+        "section": "Subjective",
+        "quote": "Low back pain for 24 weeks with pain radiating below the left knee.",
+        "date": "2026-09-30",
+        "quarantined": false
+      },
+      "Encounter/ENC-005-03": {
+        "evidence_id": "Encounter/ENC-005-03",
+        "source_type": "fhir",
+        "source_id": "Encounter/ENC-005-03",
+        "section": null,
+        "quote": "Physical therapy visit 2026-07-20",
+        "date": "2026-07-20",
+        "quarantined": false
+      },
+      "Encounter/ENC-005-04": {
+        "evidence_id": "Encounter/ENC-005-04",
+        "source_type": "fhir",
+        "source_id": "Encounter/ENC-005-04",
+        "section": null,
+        "quote": "Physical therapy visit 2026-07-27",
+        "date": "2026-07-27",
+        "quarantined": false
+      },
+      "NOTE-008#Subjective@174": {
+        "evidence_id": "NOTE-008#Subjective@174",
+        "source_type": "note",
+        "source_id": "NOTE-008",
+        "section": "Subjective",
+        "quote": "Completed 8 weeks of physical\ntherapy without improvement.",
+        "date": "2026-09-30",
+        "quarantined": false
+      },
+      "NOTE-007#Summary@117": {
+        "evidence_id": "NOTE-007#Summary@117",
+        "source_type": "note",
+        "source_id": "NOTE-007",
+        "section": "Summary",
+        "quote": "Patient attended 2 of 12 scheduled physical therapy sessions.",
+        "date": "2026-09-28",
+        "quarantined": false
+      },
+      "NOTE-007#Summary@179": {
+        "evidence_id": "NOTE-007#Summary@179",
+        "source_type": "note",
+        "source_id": "NOTE-007",
+        "section": "Summary",
+        "quote": "Discharged for non-attendance.",
+        "date": "2026-09-28",
+        "quarantined": false
+      },
+      "Condition/COND-005-02": {
+        "evidence_id": "Condition/COND-005-02",
+        "source_type": "fhir",
+        "source_id": "Condition/COND-005-02",
+        "section": null,
+        "quote": "M54.16 Radiculopathy, lumbar region",
+        "date": "2026-05-01",
+        "quarantined": false
+      },
+      "NOTE-008#Objective@265": {
+        "evidence_id": "NOTE-008#Objective@265",
+        "source_type": "note",
+        "source_id": "NOTE-008",
+        "section": "Objective",
+        "quote": "Positive straight leg raise on the left.",
+        "date": "2026-09-30",
+        "quarantined": false
+      },
+      "NOTE-008#Subjective@233": {
+        "evidence_id": "NOTE-008#Subjective@233",
+        "source_type": "note",
+        "source_id": "NOTE-008",
+        "section": "Subjective",
+        "quote": "No prior imaging.",
+        "date": "2026-09-30",
+        "quarantined": false
+      },
+      "AUTH/AUTH-5501": {
+        "evidence_id": "AUTH/AUTH-5501",
+        "source_type": "auth_history",
+        "source_id": "AUTH-5501",
+        "section": null,
+        "quote": "Lumbar spine MRI (72148) approved for 2026-05-02",
+        "date": "2026-05-02",
+        "quarantined": false
+      },
+      "Coverage/COV-005": {
+        "evidence_id": "Coverage/COV-005",
+        "source_type": "fhir",
+        "source_id": "Coverage/COV-005",
+        "section": null,
+        "quote": "Active coverage, plan PPO-GOLD, period {'start': '2021-01-01'}",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S3.1": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S3.1",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S3.1",
+        "quote": "Symptoms present for at least 6 weeks.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S3.2": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S3.2",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S3.2",
+        "quote": "At least 6 weeks of physical therapy completed within the 6 months before the request. Medication-only management or an unsupervised home program does not satisfy this criterion. Documentation must state the duration or show dated therapy encounters; a statement that therapy was \"tried\" is insufficient.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S3.3": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S3.3",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S3.3",
+        "quote": "Radicular symptoms (for example, pain radiating below the knee) or objective findings (for example, a positive straight-leg raise, dermatomal sensory loss, or reflex changes) are documented.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S3.4": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S3.4",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S3.4",
+        "quote": "No lumbar spine MRI in the prior 12 months unless there is a documented change in condition.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S5.1": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S5.1",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S5.1",
+        "quote": "Lumbar MRI is excluded when the member has an implanted device that is not MRI-conditional (for example a non-MRI-conditional pacemaker, defibrillator or neurostimulator) and no device clearance is documented. These requests require physician review.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S5.2": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S5.2",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S5.2",
+        "quote": "Imaging requested solely for legal, litigation or workers' compensation documentation, without a clinical indication, is excluded.",
+        "date": null,
+        "quarantined": false
+      },
+      "POL-MRI-LUMBAR-V3#S2": {
+        "evidence_id": "POL-MRI-LUMBAR-V3#S2",
+        "source_type": "policy",
+        "source_id": "POL-MRI-LUMBAR-V3",
+        "section": "S2",
+        "quote": "Imaging is appropriate without meeting S3 when the record documents suspected cauda equina syndrome (saddle anesthesia, new urinary retention or incontinence), a progressive neurological deficit, suspected malignancy, suspected infection, or significant trauma. Red-flag requests should be expedited.",
+        "date": null,
+        "quarantined": false
+      }
+    },
+    "agent_status": [
+      {
+        "agent": "coverage_eligibility",
+        "status": "ok",
+        "detail": "remote A2A service"
+      },
+      {
+        "agent": "clinical_evidence",
+        "status": "ok",
+        "detail": "3 facts, 0 gaps"
+      },
+      {
+        "agent": "policy_rag",
+        "status": "ok",
+        "detail": "POL-MRI-LUMBAR-V3 is in effect on the service date 2026-10-12 (2026-03-01 to open). Not used: POL-MRI-LUMBAR-V2: effective 2024-07-01 to 2026-02-28, does not cover 2026-10-12."
+      },
+      {
+        "agent": "criteria_quality",
+        "status": "ok",
+        "detail": "4 criteria evaluated; 0 citation problems"
+      }
+    ],
+    "summary_source": "template",
+    "llm_usage": null,
+    "disclaimer": "Decision support only. This is not a coverage determination. A licensed reviewer makes the final decision."
+  },
+  "events": [
+    {
+      "type": "RUN_STARTED",
+      "timestamp": 1794868482012,
+      "threadId": "PA-005",
+      "runId": "run-875f878b"
+    },
+    {
+      "type": "STATE_SNAPSHOT",
+      "timestamp": 1794868482012,
+      "snapshot": {
+        "case_id": "PA-005",
+        "stage": "investigating",
+        "agents": {
+          "clinical_evidence": "pending",
+          "coverage_eligibility": "pending",
+          "policy_rag": "pending",
+          "criteria_quality": "pending"
+        }
+      }
+    },
+    {
+      "type": "CUSTOM",
+      "timestamp": 1794868482013,
+      "name": "mcp_tools_discovered",
+      "value": [
+        "get_patient_context",
+        "search_fhir",
+        "get_clinical_notes",
+        "check_eligibility",
+        "get_authorization_history",
+        "search_policies"
+      ]
+    },
+    {
+      "type": "STEP_STARTED",
+      "timestamp": 1794868482013,
+      "stepName": "clinical_evidence"
+    },
+    {
+      "type": "STEP_STARTED",
+      "timestamp": 1794868482013,
+      "stepName": "coverage_eligibility"
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-bb6b1255",
+      "toolCallName": "search_fhir",
+      "agent": "clinical_evidence"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-bb6b1255",
+      "delta": "{\"resource_type\": \"Condition\", \"patient_id\": \"PT-005\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-bb6b1255"
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-0b6df628",
+      "toolCallName": "a2a:coverage-eligibility-agent/message/send",
+      "agent": "supervisor"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-0b6df628",
+      "delta": "{\"patient_id\": \"PT-005\", \"service_code\": \"72148\", \"service_date\": \"2026-10-12\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482013,
+      "toolCallId": "call-0b6df628"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482014,
+      "messageId": "msg-call-bb6b1255",
+      "toolCallId": "call-bb6b1255",
+      "role": "tool",
+      "content": "{\"resource_type\": \"Condition\", \"resources\": [\"Condition/COND-005-01\", \"Condition/COND-005-02\"]}",
+      "ok": true,
+      "latencyMs": 0.9
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-a6c35fd7",
+      "toolCallName": "search_fhir",
+      "agent": "clinical_evidence"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-a6c35fd7",
+      "delta": "{\"resource_type\": \"Observation\", \"patient_id\": \"PT-005\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-a6c35fd7"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482014,
+      "messageId": "msg-call-a6c35fd7",
+      "toolCallId": "call-a6c35fd7",
+      "role": "tool",
+      "content": "{\"resource_type\": \"Observation\", \"resources\": []}",
+      "ok": true,
+      "latencyMs": 0.3
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-dd6a2a22",
+      "toolCallName": "search_fhir",
+      "agent": "clinical_evidence"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-dd6a2a22",
+      "delta": "{\"resource_type\": \"Encounter\", \"patient_id\": \"PT-005\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-dd6a2a22"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482014,
+      "messageId": "msg-call-dd6a2a22",
+      "toolCallId": "call-dd6a2a22",
+      "role": "tool",
+      "content": "{\"resource_type\": \"Encounter\", \"resources\": [\"Encounter/ENC-005-03\", \"Encounter/ENC-005-04\", \"Encounter/ENC-005-05\"]}",
+      "ok": true,
+      "latencyMs": 0.2
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-53468aba",
+      "toolCallName": "get_clinical_notes",
+      "agent": "clinical_evidence"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-53468aba",
+      "delta": "{\"patient_id\": \"PT-005\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482014,
+      "toolCallId": "call-53468aba"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482015,
+      "messageId": "msg-call-53468aba",
+      "toolCallId": "call-53468aba",
+      "role": "tool",
+      "content": "{\"notes\": [{\"note_id\": \"NOTE-007\", \"date\": \"2026-09-28\", \"chars\": 210}, {\"note_id\": \"NOTE-008\", \"date\": \"2026-09-30\", \"chars\": 390}]}",
+      "ok": true,
+      "latencyMs": 0.4
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482016,
+      "messageId": "msg-call-0b6df628",
+      "toolCallId": "call-0b6df628",
+      "role": "tool",
+      "content": "{\"agent\": \"coverage_eligibility\", \"eligible\": true, \"plan\": \"PPO-GOLD\", \"coverage_id\": \"Coverage/COV-005\", \"eligibility_reason\": null, \"prior_lumbar_mri_within_12m\": true, \"prior_auth_ids\": [\"AUTH-5501\"], \"authorization_count\": 1, \"_a2a_tool_calls\": [{\"tool\": \"check_eligibility\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\", \"service_date\": \"2026-10-12\"}, \"ok\": true, \"ms\": 0.4}, {\"tool\": \"get_authorization_history\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\"}, \"ok\": true, \"ms\": 0.3}]}",
+      "ok": true,
+      "latencyMs": null
+    },
+    {
+      "type": "STEP_FINISHED",
+      "timestamp": 1794868482016,
+      "stepName": "clinical_evidence"
+    },
+    {
+      "type": "STEP_FINISHED",
+      "timestamp": 1794868482016,
+      "stepName": "coverage_eligibility"
+    },
+    {
+      "type": "STATE_DELTA",
+      "timestamp": 1794868482016,
+      "delta": [
+        {
+          "op": "replace",
+          "path": "/agents/clinical_evidence",
+          "value": "done"
+        },
+        {
+          "op": "replace",
+          "path": "/agents/coverage_eligibility",
+          "value": "done"
+        }
+      ]
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482016,
+      "toolCallId": "call-e5d7733e",
+      "toolCallName": "check_eligibility",
+      "agent": "coverage_eligibility"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482016,
+      "toolCallId": "call-e5d7733e",
+      "delta": "{\"patient_id\": \"PT-005\", \"service_date\": \"2026-10-12\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482016,
+      "toolCallId": "call-e5d7733e"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482017,
+      "messageId": "msg-call-e5d7733e",
+      "toolCallId": "call-e5d7733e",
+      "role": "tool",
+      "content": "{\"eligible\": true, \"coverage_id\": \"Coverage/COV-005\", \"plan\": \"PPO-GOLD\", \"period\": {\"start\": \"2021-01-01\"}}",
+      "ok": true,
+      "latencyMs": 0.2
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-50cb07ca",
+      "toolCallName": "get_authorization_history",
+      "agent": "coverage_eligibility"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-50cb07ca",
+      "delta": "{\"patient_id\": \"PT-005\"}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-50cb07ca"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482017,
+      "messageId": "msg-call-50cb07ca",
+      "toolCallId": "call-50cb07ca",
+      "role": "tool",
+      "content": "{\"authorizations\": [{\"auth_id\": \"AUTH-5501\", \"patient_id\": \"PT-005\", \"service_code\": \"72148\", \"service_date\": \"2026-05-02\", \"status\": \"approved\", \"description\": \"Lumbar spine MRI\"}]}",
+      "ok": true,
+      "latencyMs": 0.3
+    },
+    {
+      "type": "CUSTOM",
+      "timestamp": 1794868482017,
+      "name": "agent_disagreement",
+      "value": {
+        "fact": "prior_lumbar_mri_within_12m",
+        "agents": [
+          "clinical_evidence",
+          "coverage_eligibility"
+        ],
+        "detail": "Clinical note says prior imaging = False; authorization history (AUTH-5501) says prior lumbar MRI within 12 months = True",
+        "rechecked": true,
+        "resolution": "escalated"
+      }
+    },
+    {
+      "type": "STEP_STARTED",
+      "timestamp": 1794868482017,
+      "stepName": "policy_rag"
+    },
+    {
+      "type": "TOOL_CALL_START",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-cf9e9961",
+      "toolCallName": "search_policies",
+      "agent": "policy_rag"
+    },
+    {
+      "type": "TOOL_CALL_ARGS",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-cf9e9961",
+      "delta": "{\"query\": \"lumbar spine MRI for low back pain criteria conservative treatment physical therapy\", \"service_code\": \"72148\", \"plan\": \"PPO-GOLD\", \"service_date\": \"2026-10-12\", \"k\": 6}"
+    },
+    {
+      "type": "TOOL_CALL_END",
+      "timestamp": 1794868482017,
+      "toolCallId": "call-cf9e9961"
+    },
+    {
+      "type": "TOOL_CALL_RESULT",
+      "timestamp": 1794868482018,
+      "messageId": "msg-call-cf9e9961",
+      "toolCallId": "call-cf9e9961",
+      "role": "tool",
+      "content": "{\"query\": \"lumbar spine MRI for low back pain criteria conservative treatment physical therapy\", \"filters\": {\"service_code\": \"72148\", \"plan\": \"PPO-GOLD\", \"service_date\": \"2026-10-12\", \"family\": null}, \"hits\": [\"POL-MRI-LUMBAR-V3#S3.4\", \"POL-MRI-LUMBAR-V3#S3.2\", \"POL-MRI-LUMBAR-V3#S1\", \"POL-MRI-LUMBAR-V3#S5.1\", \"POL-MRI-LUMBAR-V3#S2\", \"POL-MRI-LUMBAR-V3#S3.3\"], \"excluded_better_ranked\": [{\"chunk_id\": \"POL-MRI-LUMBAR-V2#S1\", \"doc_id\": \"POL-MRI-LUMBAR-V2\", \"rank_unfiltered\": 1, \"reason\": \"not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)\"}, {\"chunk_id\": \"POL-MRI-LUMBAR-V2#S3.2\", \"d",
+      "ok": true,
+      "latencyMs": 1.1
+    },
+    {
+      "type": "CUSTOM",
+      "timestamp": 1794868482018,
+      "name": "retrieval",
+      "value": {
+        "hits": [
+          "POL-MRI-LUMBAR-V3#S3.4",
+          "POL-MRI-LUMBAR-V3#S3.2",
+          "POL-MRI-LUMBAR-V3#S1",
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S2",
+          "POL-MRI-LUMBAR-V3#S3.3"
+        ],
+        "excluded_better_ranked": [
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S1",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 1,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.2",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 2,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S4",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 3,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S2",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 4,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.1",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 5,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.3",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 7,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          },
+          {
+            "chunk_id": "EXC-2025-GOLD-PT#E1",
+            "doc_id": "EXC-2025-GOLD-PT",
+            "rank_unfiltered": 9,
+            "reason": "not in effect on 2026-10-12 (effective 2025-01-01 to 2025-12-31)"
+          },
+          {
+            "chunk_id": "EXC-2026-RURAL-PT#E1",
+            "doc_id": "EXC-2026-RURAL-PT",
+            "rank_unfiltered": 11,
+            "reason": "plan PPO-GOLD not listed (HMO-RURAL)"
+          },
+          {
+            "chunk_id": "POL-MRI-LUMBAR-V2#S5.1",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 12,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+          }
+        ]
+      }
+    },
+    {
+      "type": "STEP_FINISHED",
+      "timestamp": 1794868482018,
+      "stepName": "policy_rag"
+    },
+    {
+      "type": "STEP_STARTED",
+      "timestamp": 1794868482018,
+      "stepName": "criteria_quality"
+    },
+    {
+      "type": "STEP_FINISHED",
+      "timestamp": 1794868482018,
+      "stepName": "criteria_quality"
+    },
+    {
+      "type": "STATE_SNAPSHOT",
+      "timestamp": 1794868482018,
+      "snapshot": {
+        "case_id": "PA-005",
+        "stage": "ready_for_review",
+        "recommendation": "SPECIALIST_REVIEW"
+      }
+    },
+    {
+      "type": "RUN_FINISHED",
+      "timestamp": 1794868482018,
+      "threadId": "PA-005",
+      "runId": "run-875f878b",
+      "result": {
+        "recommendation": "SPECIALIST_REVIEW"
+      }
+    }
+  ]
+}

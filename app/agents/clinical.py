@@ -19,6 +19,9 @@ AGENT = "clinical_evidence"
 LBP_CODES = {"M54.50", "M54.5"}
 RADIC_CODES = {"M54.16", "M54.17"}
 RED_FLAG_CODES = {"G83.4"}
+# Documents from these sources can establish facts. Anything else (e.g. an inbound fax) is
+# unverified: its claims are shown to the reviewer for verification but never become facts.
+TRUSTED_SOURCES = {"ehr"}
 
 
 @dataclass
@@ -67,6 +70,16 @@ class ClinicalEvidenceAgent:
                                                       quote=hits[0])
                 continue
             p = parse_note(n)
+            if (n.get("source") or "ehr") not in TRUSTED_SOURCES:
+                claims = extract_statements(p)
+                out.evidence[n["note_id"]] = Evidence(evidence_id=n["note_id"], source_type="note",
+                                                      source_id=n["note_id"], date=n["date"], quarantined=True,
+                                                      quote=f"unverified source: {n.get('source')}")
+                desc = "; ".join(sorted({f"{c.kind}={c.value}" for c in claims})) or "no extractable claims"
+                out.ambiguities.append(
+                    f"{n['note_id']} is from an unverified source ({n.get('source')}); its claims ({desc}) were not "
+                    "used. Verify with the provider and enter confirmed data through the review form.")
+                continue
             parsed.append(p)
             rule_st = extract_statements(p)
             if self.llm:
