@@ -90,11 +90,16 @@ async def investigate(case_id: str):
 
     async def worker():
         try:
+            surface_box: list = []
+
+            async def send_surface(result, em):
+                policy = get_index().policies.get(result.applicable_policy_id or "")
+                surface_box.append(build_surface(result, policy))
+                await em.custom("a2ui", surface_box[0])
+
             sup = Supervisor(MCP_TARGET, a2a=A2A)
-            result, em, calls = await sup.run(st.case, st.reviewer_inputs, emitter=emitter)
-            policy = get_index().policies.get(result.applicable_policy_id or "")
-            surface = build_surface(result, policy)
-            await emitter.custom("a2ui", surface)
+            result, em, calls = await sup.run(st.case, st.reviewer_inputs, emitter=emitter, before_finish=send_surface)
+            surface = surface_box[0]
             store.record_run(case_id, {"run_id": em.run_id, "result": result, "trace": em.events,
                                        "tool_calls": calls, "a2ui": surface})
         except Exception as e:  # never leave the stream hanging
@@ -147,16 +152,38 @@ def audit(case_id: str):
     return [a for a in store.audit if a["case_id"] == case_id]
 
 
+COVERAGE_TOOLS = ["check_eligibility", "get_authorization_history"]
+_outage_mode = "none"
+
+
+@app.get("/api/admin/outage")
+def outage_status():
+    return {"mode": _outage_mode}
+
+
 @app.post("/api/admin/outage")
 async def outage(body: dict):
-    """Demo control: take the remote coverage agent down or bring it back."""
-    down = bool(body.get("coverage_down"))
+    """Demo control.
+    mode=none: normal. mode=a2a: remote coverage agent down -> in-process fallback.
+    mode=full: A2A agent down AND the MCP coverage tools failing -> RUN_ERROR + safe result.
+    (`coverage_down: true` is accepted as mode=a2a for older clients.)"""
+    global _outage_mode
+    mode = body.get("mode") or ("a2a" if body.get("coverage_down") else "none")
+    if mode not in ("none", "a2a", "full"):
+        raise HTTPException(400, "mode must be none, a2a or full")
+    a2a_down, fail_tools = mode != "none", COVERAGE_TOOLS if mode == "full" else []
     if _a2a_local is not None:
-        _a2a_local.state.down = down
+        _a2a_local.state.down = a2a_down
+        from app.services import mcp_server as _mcp_mod
+        _mcp_mod.FAULTS.clear()
+        _mcp_mod.FAULTS.update(fail_tools)
     else:
         async with httpx.AsyncClient(timeout=3) as c:
-            await c.post(f"{config.COVERAGE_A2A_URL}/admin/outage", json={"down": down})
-    return {"coverage_down": down}
+            await c.post(f"{config.COVERAGE_A2A_URL}/admin/outage", json={"down": a2a_down})
+            mcp_base = config.MCP_URL.rsplit("/mcp", 1)[0]
+            await c.post(f"{mcp_base}/admin/faults", json={"fail_tools": fail_tools})
+    _outage_mode = mode
+    return {"mode": mode, "coverage_down": a2a_down, "mcp_failing_tools": fail_tools}
 
 
 _FRONTEND = Path(__file__).resolve().parents[1] / "frontend" / "dist"

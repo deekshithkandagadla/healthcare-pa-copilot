@@ -69,3 +69,32 @@ def test_clarification_request():
                                                 "message": "Please send PT attendance records"}).json()
     assert r["clarification_id"].startswith("CLR-")
     assert c.get("/api/cases/PA-005").json()["case"]["status"] == "pending_clarification"
+
+
+def test_ui_outage_modes_drive_fallback_and_error_state():
+    from app.api import app
+    c = TestClient(app)
+    try:
+        assert c.post("/api/admin/outage", json={"mode": "a2a"}).json()["mcp_failing_tools"] == []
+        ev = _run(c, "PA-006")
+        assert any(e["type"] == "CUSTOM" and e["name"] == "fallback" for e in ev)
+        assert not any(e["type"] == "RUN_ERROR" for e in ev)
+        assert c.get("/api/cases/PA-006").json()["result"]["recommendation"] == "MEETS_CRITERIA"
+
+        c.post("/api/admin/outage", json={"mode": "full"})
+        ev = _run(c, "PA-006")
+        assert any(e["type"] == "RUN_ERROR" and e["code"] == "COVERAGE_UNAVAILABLE" for e in ev)
+        res = c.get("/api/cases/PA-006").json()["result"]
+        assert res["recommendation"] == "MORE_INFORMATION_NEEDED" and res["requires_human_review"]
+        assert c.get("/api/admin/outage").json()["mode"] == "full"
+    finally:
+        c.post("/api/admin/outage", json={"mode": "none"})
+    assert _run(c, "PA-006")[-1]["type"] == "RUN_FINISHED"
+
+
+def test_agui_stream_ends_with_run_finished_after_a2ui():
+    from app.api import app
+    ev = _run(TestClient(app), "PA-001")
+    types = [e["type"] for e in ev]
+    assert types[0] == "RUN_STARTED" and types[-1] == "RUN_FINISHED"
+    assert any(e["type"] == "CUSTOM" and e["name"] == "a2ui" for e in ev)

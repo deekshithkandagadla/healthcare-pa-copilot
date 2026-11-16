@@ -24,10 +24,26 @@ mcp = MCPServer(
 )
 _store = get_store()
 
-# Fault injection for the outage demo: comma-separated tool names that should fail.
+# Fault injection for the outage demo. Tools listed in MCP_FAIL_TOOLS (comma-separated) or set
+# through the local-only /admin/faults route fail as if their backend were down.
+FAULTS: set[str] = set()
+
+
 def _maybe_fail(tool: str) -> None:
-    if tool in {t.strip() for t in os.getenv("MCP_FAIL_TOOLS", "").split(",") if t.strip()}:
+    env = {t.strip() for t in os.getenv("MCP_FAIL_TOOLS", "").split(",") if t.strip()}
+    if tool in env | FAULTS:
         raise RuntimeError(f"{tool} is unavailable (simulated outage)")
+
+
+@mcp.custom_route("/admin/faults", methods=["GET", "POST"], include_in_schema=False)
+async def admin_faults(request):
+    """Demo control (not an MCP tool, so agents cannot reach it)."""
+    from starlette.responses import JSONResponse
+    if request.method == "POST":
+        body = await request.json()
+        FAULTS.clear()
+        FAULTS.update(t for t in body.get("fail_tools", []) if isinstance(t, str))
+    return JSONResponse({"fail_tools": sorted(FAULTS)})
 
 
 def _age(birth: str, on: str) -> int:

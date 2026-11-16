@@ -46,4 +46,5 @@ td, th { text-align:left; padding:6px; border-bottom:1px solid var(--line); vert
 form label { display:block; margin:6px 0 2px; font-size:13px; }
 input[type=number], input[type=text], textarea, select { font:inherit; padding:5px; width:100%; border:1px solid var(--line); border-radius:6px; }
 .toggle { font-size:13px; }
+.toggle select { width:auto; margin-left:6px; }
 .err { color:var(--bad); }

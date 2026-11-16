@@ -9,7 +9,12 @@
 <body>
 <header>
   <div><strong>Prior Authorization Copilot</strong> <span class="muted">· synthetic data · decision support only</span></div>
-  <label class="toggle"><input type="checkbox" id="outage"> Simulate coverage-agent (A2A) outage</label>
+  <label class="toggle">Coverage service:
+    <select id="outage">
+      <option value="none">Normal</option>
+      <option value="a2a">A2A agent down (fallback)</option>
+      <option value="full">Full outage (error state)</option>
+    </select></label>
 </header>
 <main>
   <aside id="cases"><h2>Cases</h2><ul id="case-list"></ul></aside>

@@ -165,5 +165,6 @@ async function loadAudit() {
 
 $("#run").onclick = investigate;
 $("#outage").onchange = (e) => fetch("/api/admin/outage", { method: "POST", headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ coverage_down: e.target.checked }) });
+  body: JSON.stringify({ mode: e.target.value }) });
+fetch("/api/admin/outage").then((r) => r.json()).then((d) => ($("#outage").value = d.mode));
 loadCases();

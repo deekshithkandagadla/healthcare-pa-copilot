@@ -16,7 +16,7 @@ python -m venv .venv
 source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 72 tests
+pytest                               # 74 tests
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
 
@@ -75,7 +75,8 @@ never decides the recommendation. Its output is checked in code before use:
 | PA-003 | Therapy mentioned without duration; stale 2024 record ignored | MORE_INFORMATION_NEEDED + case-specific form |
 | PA-004 | Faxed document with a prompt injection | Quarantined; DOES_NOT_APPEAR_TO_MEET_CRITERIA on the real facts |
 | PA-005 | Notes contradict encounters; notes contradict authorization history | Agent disagreement → SPECIALIST_REVIEW |
-| PA-006 | Coverage A2A service down (toggle in the UI) | Fallback, flagged for review |
+| PA-006 | Set **Coverage service** (top right) to "A2A agent down" | Fallback to the in-process agent, flagged for review |
+| PA-006 | Set **Coverage service** to "Full outage" | `RUN_ERROR` in the stream, safe MORE_INFORMATION_NEEDED, nothing fabricated |
 | PA-007 | Rural plan exception within its date window | MEETS_CRITERIA with EXC-2026-RURAL-PT |
 | PA-008 | Cauda equina red flags | Red-flag bypass, expedite |
 | PA-009 | Criteria met, but a non-MRI-conditional pacemaker is documented | Exclusion X-01 → SPECIALIST_REVIEW (physician), never an automated not-met |
@@ -87,7 +88,7 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 72 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 74 tests.
 
 Next: an evaluation runner and report (accuracy, retrieval, latency, token cost), the full
 architecture note, and the demo video.

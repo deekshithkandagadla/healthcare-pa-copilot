@@ -76,7 +76,9 @@ class Supervisor:
 
     # ------------------------------------------------------------------ main
     async def run(self, case: dict, reviewer_inputs: list[dict] | None = None,
-                  emitter: EventEmitter | None = None) -> tuple[PAResult, EventEmitter, list[dict]]:
+                  emitter: EventEmitter | None = None, before_finish=None) -> tuple[PAResult, EventEmitter, list[dict]]:
+        """`before_finish(result, emitter)` runs before RUN_FINISHED (e.g. to stream the A2UI surface),
+        so RUN_FINISHED is always the last event of a run."""
         emitter = emitter or EventEmitter(thread_id=case["case_id"], sink=self.sink)
         status: list[AgentStatus] = []
         uncertainties: list[str] = []
@@ -109,6 +111,8 @@ class Supervisor:
                               summary="The system could not complete the investigation and made no clinical findings.")
         await emitter.state_snapshot({"case_id": case["case_id"], "stage": "ready_for_review",
                                       "recommendation": result.recommendation})
+        if before_finish:
+            await before_finish(result, emitter)
         await emitter.run_finished({"recommendation": result.recommendation})
         return result, emitter, tools.calls
 
@@ -298,9 +302,9 @@ class Supervisor:
             parts.append(f"{r.criterion_id} {r.status.lower().replace('_', ' ')}"
                          + (f" (observed {r.observed}, required {r.threshold})" if r.observed is not None else "") + ".")
         if missing:
-            parts.append("Missing: " + "; ".join(missing) + ".")
+            parts.append("Missing: " + "; ".join(m.rstrip(".") for m in missing) + ".")
         if contradictions:
-            parts.append("Contradictions: " + "; ".join(contradictions) + ".")
+            parts.append("Contradictions: " + "; ".join(c.rstrip(".") for c in contradictions) + ".")
         if clinical.security_flags:
             parts.append(f"{len(clinical.security_flags)} document(s) quarantined as untrusted.")
         return " ".join(parts)
