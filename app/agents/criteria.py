@@ -10,7 +10,7 @@ import operator
 from dataclasses import dataclass, field
 
 from app.agents.extract import verify_quote
-from app.models import CriterionResult, Evidence, Fact
+from app.models import CriterionResult, Evidence, ExclusionResult, Fact
 from app.retrieval.index import PolicyIndex
 
 AGENT = "criteria_quality"
@@ -20,6 +20,7 @@ OPS = {">=": operator.ge, ">": operator.gt, "==": operator.eq, "<=": operator.le
 @dataclass
 class CriteriaOutput:
     results: list[CriterionResult] = field(default_factory=list)
+    exclusions: list[ExclusionResult] = field(default_factory=list)
     red_flag: bool = False
     red_flag_evidence: list[str] = field(default_factory=list)
 
@@ -31,6 +32,15 @@ def evaluate(policy: dict, exceptions: list[dict], facts: dict[str, Fact],
     if facts.get("red_flag") and facts["red_flag"].value:
         out.red_flag = True
         out.red_flag_evidence = facts["red_flag"].evidence_ids + [f"{pid}#{policy['red_flag_section']}"]
+
+    # Exclusions apply only on affirmative, cited evidence; absence is NOT_DOCUMENTED, never "applies".
+    for x in policy.get("exclusions", []):
+        f = facts.get(x["rule"]["fact"])
+        applies = f is not None and OPS[x["rule"]["op"]](f.value, x["rule"]["value"])
+        out.exclusions.append(ExclusionResult(
+            exclusion_id=x["exclusion_id"], description=x["description"], policy_section=x["section"],
+            status="APPLIES" if applies else "NOT_DOCUMENTED",
+            evidence_ids=(f.evidence_ids + [f"{pid}#{x['section']}"]) if applies else []))
 
     overrides = {e["criterion_id"]: e for e in exceptions}
     for cr in policy["criteria"]:

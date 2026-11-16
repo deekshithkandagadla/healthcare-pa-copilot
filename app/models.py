@@ -43,6 +43,14 @@ class CriterionResult(BaseModel):
     policy_section: str | None = None
 
 
+class ExclusionResult(BaseModel):
+    exclusion_id: str
+    description: str
+    status: Literal["APPLIES", "NOT_DOCUMENTED"]
+    evidence_ids: list[str] = Field(default_factory=list)
+    policy_section: str | None = None
+
+
 class AgentStatus(BaseModel):
     agent: str
     status: Literal["ok", "degraded", "failed", "skipped"]
@@ -57,6 +65,7 @@ class PAResult(BaseModel):
     exceptions_applied: list[str] = Field(default_factory=list)
     red_flag_pathway: bool = False
     criteria: list[CriterionResult] = Field(default_factory=list)
+    exclusions: list[ExclusionResult] = Field(default_factory=list)
     missing_information: list[str] = Field(default_factory=list)
     uncertainties: list[str] = Field(default_factory=list)
     contradictions: list[str] = Field(default_factory=list)
@@ -81,6 +90,14 @@ class PAResult(BaseModel):
                 raise ValueError(f"{c.criterion_id} is {c.status} without evidence")
             if c.status in ("SUPPORTED", "NOT_SUPPORTED") and any(self.evidence[e].quarantined for e in c.evidence_ids):
                 raise ValueError(f"{c.criterion_id} relies on quarantined evidence")
+        for x in self.exclusions:
+            if x.status == "APPLIES" and not any(e in known and not self.evidence[e].quarantined
+                                                 for e in x.evidence_ids if not e.startswith("POL-")):
+                raise ValueError(f"Exclusion {x.exclusion_id} applies without clinical evidence")
+            if [e for e in x.evidence_ids if e not in known]:
+                raise ValueError(f"{x.exclusion_id} cites unknown evidence")
+        if any(x.status == "APPLIES" for x in self.exclusions) and self.recommendation == "MEETS_CRITERIA":
+            raise ValueError("An applicable exclusion cannot produce MEETS_CRITERIA")
         if self.recommendation == "DOES_NOT_APPEAR_TO_MEET_CRITERIA":
             if not any(c.status == "NOT_SUPPORTED" for c in self.criteria):
                 raise ValueError("A not-met recommendation needs at least one affirmatively unmet criterion")

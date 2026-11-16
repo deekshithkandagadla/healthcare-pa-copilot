@@ -71,6 +71,10 @@ class PolicyAgent:
             cid = f"{pol['policy_id']}#{cr['section']}"
             out.evidence[cid] = Evidence(evidence_id=cid, source_type="policy", source_id=pol["policy_id"],
                                          section=cr["section"], quote=self.index.chunk_text(cid))
+        for x in pol.get("exclusions", []):
+            xid = f"{pol['policy_id']}#{x['section']}"
+            out.evidence[xid] = Evidence(evidence_id=xid, source_type="policy", source_id=pol["policy_id"],
+                                         section=x["section"], quote=self.index.chunk_text(xid))
         rf = f"{pol['policy_id']}#{pol['red_flag_section']}"
         out.evidence[rf] = Evidence(evidence_id=rf, source_type="policy", source_id=pol["policy_id"],
                                     section=pol["red_flag_section"], quote=self.index.chunk_text(rf))

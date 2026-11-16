@@ -18,6 +18,12 @@
      "rule": {"fact": "conservative_therapy_weeks", "op": ">=", "value": 4}},
     {"criterion_id": "C-03", "section": "S3.3", "description": "No lumbar spine MRI in the prior 12 months unless symptoms are new or worsening",
      "rule": {"fact": "prior_lumbar_mri_within_12m", "op": "==", "value": false}}
+  ],
+  "exclusions": [
+    {"exclusion_id": "X-01", "section": "S5.1", "description": "Implanted device that is not MRI-conditional, without documented device clearance",
+     "rule": {"fact": "mri_unsafe_device", "op": "==", "value": true}},
+    {"exclusion_id": "X-02", "section": "S5.2", "description": "Imaging requested solely for legal, litigation or workers' compensation documentation",
+     "rule": {"fact": "medicolegal_only", "op": "==", "value": true}}
   ]
 }
 ---
@@ -47,3 +53,13 @@ No lumbar spine MRI in the prior 12 months, unless symptoms are new or worsening
 
 ## S4 Documentation
 Clinical notes should describe the low back pain, its duration, and the conservative treatment tried.
+
+## S5 Exclusions
+### S5.1 MRI safety
+Lumbar MRI is excluded when the member has an implanted device that is not MRI-conditional
+(for example a non-MRI-conditional pacemaker, defibrillator or neurostimulator) and no device
+clearance is documented. These requests require physician review.
+
+### S5.2 Non-clinical purpose
+Imaging requested solely for legal, litigation or workers' compensation documentation, without a
+clinical indication, is excluded.

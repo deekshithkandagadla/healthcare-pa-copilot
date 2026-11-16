@@ -76,6 +76,9 @@ _RULES: list[tuple[str, str, object]] = [
     ("red_flag", r"urinary retention", "urinary retention"),
     ("red_flag", r"cauda equina", "cauda equina"),
     ("red_flag", r"reduced perianal sensation", "perianal sensory loss"),
+    ("mri_unsafe_device", r"(?:non-mri-conditional|mri-unsafe|non-mri-compatible) (?:cardiac )?(?:pacemaker|defibrillator|implant|device|neurostimulator)", True),
+    ("device_cleared", r"(?:device|pacemaker) clearance (?:obtained|on file|documented)", True),
+    ("medicolegal_only", r"(?:requested|needed|ordered) (?:solely |only )?for (?:legal|litigation|workers' compensation) (?:purposes|documentation)", True),
     ("no_prior_imaging", r"no prior imaging", False),
     ("prior_mri", r"prior (?:lumbar )?mri", True),
 ]
@@ -103,7 +106,8 @@ def extract_statements(note: ParsedNote) -> list[Statement]:
             s, e = _sentence_bounds(note.text, m.start(), m.end())
             prefix = note.text[s:m.start()]
             # Negated findings ("Denies saddle anesthesia", "no prior MRI") do not count.
-            if kind in ("red_flag", "prior_mri", "radic_pos") and NEG.search(prefix):
+            if kind in ("red_flag", "prior_mri", "radic_pos", "mri_unsafe_device", "device_cleared",
+                        "medicolegal_only") and NEG.search(prefix):
                 continue
             if isinstance(val, int) and not isinstance(val, bool):
                 value = int(m.group(val))

@@ -375,6 +375,38 @@ Urgent lumbar spine MRI (CPT 72148).
                    "expected_criteria": {}, "expected_missing": [], "injection_present": False,
                    "expected_red_flag": True})
 
+    # PA-009: criteria met, but a policy exclusion applies (non-MRI-conditional pacemaker).
+    b = Builder("PT-009", "1956-02-11", "male")
+    b.coverage("PPO-GOLD", "2018-01-01", None)
+    b.condition(LBP, "2026-06-01")
+    b.condition(RADIC, "2026-06-20")
+    b.pt_encounters("2026-07-06", 7)
+    b.office_visit("2026-10-02")
+    b.note("NOTE-012", "2026-10-02", "Primary care", """
+## Subjective
+Low back pain for 17 weeks radiating below the right knee. Completed 7 weeks of physical therapy.
+No prior imaging. Denies bowel or bladder changes. History of complete heart block with a
+non-MRI-conditional pacemaker placed in 2015; no device clearance on file.
+
+## Objective
+Positive straight leg raise on the right.
+
+## Assessment
+Lumbar radiculopathy.
+
+## Plan
+Request lumbar spine MRI (CPT 72148).
+""")
+    b.write()
+    cases.append({"case_id": "PA-009", "patient_id": "PT-009", "service_code": "72148",
+                  "service_date": "2026-10-16", "requested_by": "Synthetic Primary Care Clinic",
+                  "summary": "Lumbar MRI; criteria met but a policy exclusion (MRI-unsafe device) applies",
+                  "scenario": "policy_exclusion"})
+    labels.append({"case_id": "PA-009", "expected_recommendation": "SPECIALIST_REVIEW",
+                   "expected_policy_id": "POL-MRI-LUMBAR-V3",
+                   "expected_criteria": {"C-01": "SUPPORTED", "C-02": "SUPPORTED", "C-03": "SUPPORTED", "C-04": "SUPPORTED"},
+                   "expected_missing": [], "injection_present": False, "expected_exclusions": ["X-01"]})
+
     return cases, auths, labels
 
 

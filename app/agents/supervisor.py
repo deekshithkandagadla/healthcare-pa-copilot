@@ -232,17 +232,25 @@ class Supervisor:
         rec = self._decide(crit, coverage, contradictions, problems)
         if crit.red_flag:
             await emitter.custom("red_flag_pathway", {"evidence_ids": crit.red_flag_evidence})
+        applied_x = [x for x in crit.exclusions if x.status == "APPLIES"]
+        for x in applied_x:
+            await emitter.custom("policy_exclusion", {"exclusion_id": x.exclusion_id, "evidence_ids": x.evidence_ids})
+            contradictions.append(f"Policy exclusion {x.exclusion_id} applies: {x.description}. "
+                                  "Physician review required; the system does not deny.")
         exc_ids = [e["exception_id"] for e in pol.exceptions]
         reason = pol.reason + (f" Exceptions applied: {exc_ids}." if exc_ids else "") + \
             (" Exceptions considered and not applied: " + "; ".join(pol.exception_notes) + "." if pol.exception_notes else "")
         return self._finish(case, rec, pol.policy["policy_id"], reason, exc_ids, crit.results, crit.red_flag,
-                            crit.red_flag_evidence, gaps, uncertainties, contradictions, clinical, evidence, status)
+                            crit.red_flag_evidence, gaps, uncertainties, contradictions, clinical, evidence, status,
+                            exclusions=crit.exclusions)
 
     @staticmethod
     def _decide(crit, coverage, contradictions, problems) -> str:
         statuses = [r.status for r in crit.results]
         if problems:
             return "SPECIALIST_REVIEW"
+        if any(x.status == "APPLIES" for x in crit.exclusions):
+            return "SPECIALIST_REVIEW"   # exclusions go to a physician; never an automated not-met
         if crit.red_flag:
             return "MEETS_CRITERIA"
         if coverage is None or not coverage.get("eligible"):
@@ -256,7 +264,9 @@ class Supervisor:
         return "MORE_INFORMATION_NEEDED"
 
     def _finish(self, case, rec, policy_id, reason, exc_ids, criteria: list[CriterionResult], red_flag, rf_ev,
-                gaps, uncertainties, contradictions, clinical: ClinicalOutput, evidence, status) -> PAResult:
+                gaps, uncertainties, contradictions, clinical: ClinicalOutput, evidence, status,
+                exclusions=None) -> PAResult:
+        exclusions = exclusions or []
         missing = [f"{r.criterion_id}: {r.description}" for r in criteria if r.status == "MISSING"] + gaps
         missing = [] if red_flag else list(dict.fromkeys(missing))  # standard criteria bypassed
         uncertainties = list(dict.fromkeys(uncertainties + clinical.ambiguities))
@@ -265,7 +275,8 @@ class Supervisor:
         try:
             return PAResult(case_id=case["case_id"], recommendation=rec, applicable_policy_id=policy_id,
                             policy_selection_reason=reason, exceptions_applied=exc_ids, red_flag_pathway=red_flag,
-                            criteria=criteria, missing_information=missing, uncertainties=uncertainties,
+                            criteria=criteria, exclusions=exclusions, missing_information=missing,
+                            uncertainties=uncertainties,
                             contradictions=contradictions, security_flags=clinical.security_flags,
                             requires_human_review=human, summary=summary, evidence=evidence, agent_status=status)
         except ValidationError as e:

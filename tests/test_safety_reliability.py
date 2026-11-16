@@ -161,3 +161,12 @@ async def test_trace_has_no_direct_identifiers(supervisor, cid):
     _, em, _ = await supervisor.run(load_case(cid))
     blob = json.dumps(em.events)
     assert "Synthetic Patient" not in blob and "birthDate" not in blob
+
+
+def test_schema_rejects_exclusion_without_clinical_evidence():
+    from app.models import ExclusionResult
+    ev = {"POL-X#S5.1": Evidence(evidence_id="POL-X#S5.1", source_type="policy", source_id="POL-X")}
+    with pytest.raises(ValidationError):
+        PAResult(case_id="X", recommendation="SPECIALIST_REVIEW", applicable_policy_id="P", evidence=ev,
+                 exclusions=[ExclusionResult(exclusion_id="X-01", description="d", status="APPLIES",
+                                             evidence_ids=["POL-X#S5.1"])])

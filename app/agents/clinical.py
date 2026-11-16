@@ -191,6 +191,17 @@ class ClinicalEvidenceAgent:
             out.facts["red_flag"] = Fact(name="red_flag", value=True, evidence_ids=rf, agent=AGENT,
                                          detail=", ".join(sorted({s.value for s in by_kind.get('red_flag', [])})))
 
+        # ---- policy exclusion facts (only when the record states them) -----------------
+        if by_kind.get("mri_unsafe_device"):
+            dev = [cite(s) for s in by_kind["mri_unsafe_device"]]
+            cleared = [cite(s) for s in by_kind.get("device_cleared", [])]
+            out.facts["mri_unsafe_device"] = Fact(
+                name="mri_unsafe_device", value=not cleared, evidence_ids=dev + cleared, agent=AGENT,
+                detail="Device clearance documented" if cleared else "No device clearance documented")
+        if by_kind.get("medicolegal_only"):
+            out.facts["medicolegal_only"] = Fact(name="medicolegal_only", value=True, agent=AGENT,
+                                                 evidence_ids=[cite(s) for s in by_kind["medicolegal_only"]])
+
         # ---- prior imaging, as stated in the notes -----------------------------------
         if by_kind.get("prior_mri"):
             out.facts["prior_imaging_per_notes"] = Fact(name="prior_imaging_per_notes", value=True, agent=AGENT,

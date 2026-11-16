@@ -129,6 +129,13 @@ def build_surface(result: PAResult, policy: dict | None) -> list[dict]:
         comps.append(component("security", "AlertList", {"severity": "critical", "title": "Untrusted content quarantined",
                                                          "items": result.security_flags}))
         children.append("security")
+    if result.exclusions:
+        comps.append(component("exclusions", "AlertList", {
+            "severity": "critical" if any(x.status == "APPLIES" for x in result.exclusions) else "info",
+            "title": "Policy exclusions",
+            "items": [f"{x.exclusion_id} {x.status.replace('_', ' ').lower()}: {x.description}"
+                      + (f" [{', '.join(x.evidence_ids)}]" if x.evidence_ids else "") for x in result.exclusions]}))
+        children.append("exclusions")
     if result.contradictions or result.uncertainties:
         comps.append(component("uncertain", "AlertList", {"severity": "warning", "title": "Contradictions and uncertainties",
                                                           "items": result.contradictions + result.uncertainties}))

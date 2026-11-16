@@ -20,6 +20,12 @@
      "rule": {"fact": "radiculopathy", "op": "==", "value": true}},
     {"criterion_id": "C-04", "section": "S3.4", "description": "No lumbar spine MRI in the prior 12 months unless there is a documented change in condition",
      "rule": {"fact": "prior_lumbar_mri_within_12m", "op": "==", "value": false}}
+  ],
+  "exclusions": [
+    {"exclusion_id": "X-01", "section": "S5.1", "description": "Implanted device that is not MRI-conditional, without documented device clearance",
+     "rule": {"fact": "mri_unsafe_device", "op": "==", "value": true}},
+    {"exclusion_id": "X-02", "section": "S5.2", "description": "Imaging requested solely for legal, litigation or workers' compensation documentation",
+     "rule": {"fact": "medicolegal_only", "op": "==", "value": true}}
   ]
 }
 ---
@@ -54,3 +60,13 @@ No lumbar spine MRI in the prior 12 months unless there is a documented change i
 ## S4 Exceptions
 Date-limited plan exceptions published in the exception register may modify S3 thresholds.
 Exceptions apply only within their effective window and only to the listed plans.
+
+## S5 Exclusions
+### S5.1 MRI safety
+Lumbar MRI is excluded when the member has an implanted device that is not MRI-conditional
+(for example a non-MRI-conditional pacemaker, defibrillator or neurostimulator) and no device
+clearance is documented. These requests require physician review.
+
+### S5.2 Non-clinical purpose
+Imaging requested solely for legal, litigation or workers' compensation documentation, without a
+clinical indication, is excluded.

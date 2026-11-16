@@ -91,6 +91,9 @@ KINDS = {
     "radic_pos": "true (radicular symptoms or objective neurological findings are PRESENT)",
     "radic_neg": "false (the note states radicular/neurological findings are ABSENT, e.g. negative straight leg raise)",
     "red_flag": "string naming the red flag that is PRESENT (not denied): saddle anesthesia, urinary retention, cauda equina, etc.",
+    "mri_unsafe_device": "true (note states an implanted device that is NOT MRI-conditional / MRI-unsafe)",
+    "device_cleared": "true (note states MRI device clearance was obtained or is on file)",
+    "medicolegal_only": "true (imaging requested solely for legal, litigation or workers' compensation purposes)",
     "no_prior_imaging": "false (note states there has been no prior imaging)",
     "prior_mri": "true (note states a prior lumbar MRI was done)",
 }
@@ -106,10 +109,12 @@ If nothing applies, return []. Allowed kinds and value types:
 _TYPES = {
     "pain_weeks": (int, float), "pt_weeks_claim": (int, float), "nsaid_weeks": (int, float),
     "home_exercise_weeks": (int, float), "radic_pos": (bool,), "radic_neg": (bool,), "red_flag": (str,),
-    "no_prior_imaging": (bool,), "prior_mri": (bool,),
+    "no_prior_imaging": (bool,), "prior_mri": (bool,), "mri_unsafe_device": (bool,),
+    "device_cleared": (bool,), "medicolegal_only": (bool,),
     "pt_nonattendance": (type(None), dict), "pt_not_started": (type(None),), "pt_mentioned_no_duration": (type(None),),
 }
-_FIXED = {"radic_pos": True, "radic_neg": False, "no_prior_imaging": False, "prior_mri": True}
+_FIXED = {"radic_pos": True, "radic_neg": False, "no_prior_imaging": False, "prior_mri": True,
+          "mri_unsafe_device": True, "device_cleared": True, "medicolegal_only": True}
 
 
 def _parse_json_array(text: str) -> list:
@@ -133,7 +138,8 @@ def validate_items(note: ParsedNote, items: list, usage: Usage) -> list[Statemen
         if kind not in KINDS:
             usage.rejected_items.append(f"{note.note_id}: unknown kind {kind!r}")
             continue
-        if isinstance(value, bool) and kind not in ("radic_pos", "radic_neg", "no_prior_imaging", "prior_mri"):
+        if isinstance(value, bool) and kind not in ("radic_pos", "radic_neg", "no_prior_imaging", "prior_mri",
+                                                     "mri_unsafe_device", "device_cleared", "medicolegal_only"):
             usage.rejected_items.append(f"{note.note_id}: bad value type for {kind}")
             continue
         if not isinstance(value, _TYPES[kind]):
@@ -142,7 +148,8 @@ def validate_items(note: ParsedNote, items: list, usage: Usage) -> list[Statemen
         if kind in _FIXED and value != _FIXED[kind]:
             usage.rejected_items.append(f"{note.note_id}: {kind} must be {_FIXED[kind]}")
             continue
-        if kind in ("red_flag", "radic_pos", "prior_mri") and NEG.search(quote.split(",")[0]) \
+        if kind in ("red_flag", "radic_pos", "prior_mri", "device_cleared", "medicolegal_only") \
+                and NEG.search(quote.split(",")[0]) \
                 and not re.search(r"\bnow\b", quote, re.IGNORECASE):
             usage.rejected_items.append(f"{note.note_id}: {kind} quote is negated ({quote[:40]!r})")
             continue
@@ -208,6 +215,7 @@ def summary_payload(result) -> dict:
         "criteria": [{"id": c.criterion_id, "description": c.description, "status": c.status,
                       "observed": c.observed, "required": c.threshold, "evidence": c.evidence_ids}
                      for c in result.criteria],
+        "exclusions": [{"id": x.exclusion_id, "status": x.status, "evidence": x.evidence_ids} for x in result.exclusions],
         "missing": result.missing_information, "contradictions": result.contradictions,
         "quarantined_documents": len(result.security_flags), "allowed_evidence_ids": sorted(k for k, e in result.evidence.items() if not e.quarantined),
     }

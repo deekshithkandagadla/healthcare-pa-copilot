@@ -15,6 +15,8 @@ async def test_case_matches_label(supervisor, cid):
         assert got[crit] == status, f"{cid} {crit}: {got[crit]} != {status}"
     for exc in label.get("expected_exceptions", []):
         assert exc in result.exceptions_applied
+    applied = [x.exclusion_id for x in result.exclusions if x.status == "APPLIES"]
+    assert applied == label.get("expected_exclusions", [])
     if label.get("expected_red_flag"):
         assert result.red_flag_pathway
     assert bool(result.security_flags) == label["injection_present"]
@@ -56,3 +58,15 @@ async def test_note_claim_wrapped_across_lines_is_extracted(supervisor):
     r, _, _ = await supervisor.run(load_case("PA-001"))
     c02 = next(c for c in r.criteria if c.criterion_id == "C-02")
     assert any(e.startswith("NOTE-001#") for e in c02.evidence_ids) and "note claims [8]" in c02.rationale
+
+
+async def test_exclusion_needs_evidence_and_is_never_a_denial(supervisor):
+    r, em, _ = await supervisor.run(load_case("PA-009"))
+    x01 = next(x for x in r.exclusions if x.exclusion_id == "X-01")
+    assert x01.status == "APPLIES" and any(e.startswith("NOTE-012#") for e in x01.evidence_ids)
+    assert "POL-MRI-LUMBAR-V3#S5.1" in x01.evidence_ids
+    assert r.recommendation == "SPECIALIST_REVIEW" and r.requires_human_review
+    assert any(e["type"] == "CUSTOM" and e["name"] == "policy_exclusion" for e in em.events)
+    # Absence of a documented exclusion is NOT_DOCUMENTED, not "applies"
+    r1, _, _ = await supervisor.run(load_case("PA-001"))
+    assert {x.status for x in r1.exclusions} == {"NOT_DOCUMENTED"}

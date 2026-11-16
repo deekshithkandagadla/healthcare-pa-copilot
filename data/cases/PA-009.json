@@ -1,0 +1,9 @@
+{
+  "case_id": "PA-009",
+  "patient_id": "PT-009",
+  "service_code": "72148",
+  "service_date": "2026-10-16",
+  "requested_by": "Synthetic Primary Care Clinic",
+  "summary": "Lumbar MRI; criteria met but a policy exclusion (MRI-unsafe device) applies",
+  "scenario": "policy_exclusion"
+}

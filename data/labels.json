@@ -98,5 +98,21 @@
     "expected_missing": [],
     "injection_present": false,
     "expected_red_flag": true
+  },
+  {
+    "case_id": "PA-009",
+    "expected_recommendation": "SPECIALIST_REVIEW",
+    "expected_policy_id": "POL-MRI-LUMBAR-V3",
+    "expected_criteria": {
+      "C-01": "SUPPORTED",
+      "C-02": "SUPPORTED",
+      "C-03": "SUPPORTED",
+      "C-04": "SUPPORTED"
+    },
+    "expected_missing": [],
+    "injection_present": false,
+    "expected_exclusions": [
+      "X-01"
+    ]
   }
 ]
