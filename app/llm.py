@@ -199,7 +199,8 @@ def merge(rule_st: list[Statement], llm_st: list[Statement]) -> list[Statement]:
 SUMMARY_SYSTEM = """You write a short summary for a utilization-management nurse reviewing a prior
 authorization. Use ONLY the findings given. Plain text only: no markdown, headings, bold or
 bullets. 3 to 5 sentences, at most 120 words, plain language.
-Rules: state the system recommendation exactly as given; cite evidence IDs in square brackets,
+Rules: the first sentence must contain the recommendation code exactly as given, in capitals with
+underscores (for example "The system recommendation is MEETS_CRITERIA under POL-X."); cite evidence IDs in square brackets,
 only IDs from the list provided; never say a request is approved or denied (a human decides);
 mention missing information, contradictions and quarantined documents if present; no diagnosis."""
 
