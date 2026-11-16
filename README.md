@@ -99,4 +99,17 @@ variants and 6 failure scenarios, and writes `docs/EVALUATION.md` with a full mu
 
 Next: the full architecture note and the demo video.
 
-See `docs/ARCHITECTURE.md` for design decisions and known limitations.
+## Assumptions, shortcuts, costs and unfinished work
+
+- **Assumptions:** synthetic data only (9 patients, one service: lumbar MRI, CPT 72148); labels written by the
+  developer; EHR documents are trusted and anything else (e.g. fax) is unverified until a reviewer confirms it.
+- **Shortcuts:** pattern-based note extraction by default (Claude adds coverage when enabled); offline LSA instead of
+  neural embeddings; in-memory case state with a JSONL audit file; a hand-built subset of A2A; no authentication.
+- **Costs:** rules-only mode is free. With Claude Sonnet 5.5, about $0.01 per case at list price
+  (measured by `scripts/evaluate.py --mode llm`).
+- **Unfinished:** trained injection classifier (pattern detection catches 3 of 5 test variants; the other two are
+  contained by source trust and the rules), neural embeddings on a larger corpus, durable multi-user storage,
+  A2A streaming and MCP authorization.
+- **Secrets:** none in the repo. The API key lives in `.env`, which is gitignored.
+
+Details: `docs/ARCHITECTURE.md` (design, data flow, protocols, tradeoffs) and `docs/EVALUATION.md` (results and failure analysis).
