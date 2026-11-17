@@ -105,15 +105,16 @@ Per-query results (Hybrid: BM25 + neural (RRF), top 3 after filtering by plan, s
 
 | Test | Must not return | Result |
 |---|---|---|
-| Q14 "lumbar spine MRI for low back pain after conservative treatment" | `POL-MRI-LUMBAR-V2` | ✅ `POL-MRI-LUMBAR-V2#S1` ranked #1 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S2` ranked #2 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S3.2` ranked #3 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S3.3` ranked #4 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S3.1` ranked #5 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S4` ranked #7 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28); `POL-MRI-LUMBAR-V2#S5.1` ranked #8 before filtering, excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28) |
+| Q14 "lumbar spine MRI for low back pain after conservative treatment" | `POL-MRI-LUMBAR-V2` | ✅ 7 sections of `POL-MRI-LUMBAR-V2` outranked the answer before filtering (best: `POL-MRI-LUMBAR-V2#S1` at #1); all excluded: not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28) |
 | Q15 "therapy shortage exception for gold plan" | `EXC-2025-GOLD-PT` | ✅ not returned |
 
 Results outside their effective window, across all queries: **0**.
 
+**Reading.** Adding neural embeddings raised hybrid top-1 accuracy from 85.0% to 90.0% and top-3 from 95.0% to 100.0%, mostly on the synonym and paraphrase queries (Q16–Q22). Neural search alone scores higher still on top-1 (95.0%). Hybrid is kept because the assignment calls for it and because keyword matching protects exact codes and rare terms (Q18 "neurostimulator", Q19 "CPT 72148"). With 20 queries, each query is 5 points, so these are directional results, not significant ones.
+
 Semantic search uses neural embeddings (`BAAI/bge-small-en-v1.5`, local ONNX via fastembed, no API key) and
 falls back to LSA if the model cannot load. Q16–Q22 are written to need meaning rather than shared words
-(synonyms, lay descriptions, paraphrases), which is where keyword search and LSA are weakest. The corpus is
-small (about 20 sections), so differences of one or two queries are not significant.
+(synonyms, lay descriptions, paraphrases), which is where keyword search and LSA are weakest.
 
 ## Prompt-injection resistance
 

@@ -92,10 +92,23 @@ def _retrieval(rt):
         out.append(f"| {q['id']} \"{q['query']}\" | `{q['expected']}` | {q['rank'] or 'not in top 3'} | {q['note']} |")
     out += ["", "**Version and window tests**", "", "| Test | Must not return | Result |", "|---|---|---|"]
     for v in rt["version_tests"]:
-        ex = "; ".join(f"`{e['chunk_id']}` ranked #{e['rank']} before filtering, excluded: {e['reason']}"
-                       for e in v["excluded_better_ranked"])
+        exs = v["excluded_better_ranked"]
+        ex = ""
+        if exs:
+            ex = (f"{len(exs)} sections of `{exs[0]['chunk_id'].split('#')[0]}` outranked the answer before filtering "
+                  f"(best: `{exs[0]['chunk_id']}` at #{exs[0]['rank']}); all excluded: {exs[0]['reason']}")
         out.append(f"| {v['id']} \"{v['query']}\" | `{v['must_not_return']}` | {_mark(v['ok'])} {ex or 'not returned'} |")
     out.append(f"\nResults outside their effective window, across all queries: **{rt['in_effect_violations']}**.")
+    b = rt["by_scorer"]
+    if "neural" in b:
+        out += ["", f"**Reading.** Adding neural embeddings raised hybrid top-1 accuracy from {b['hybrid_lsa']['hit@1']}% "
+                f"to {b['hybrid_neural']['hit@1']}% and top-3 from {b['hybrid_lsa']['hit@3']}% to {b['hybrid_neural']['hit@3']}%, "
+                "mostly on the synonym and paraphrase queries (Q16–Q22). "
+                + (f"Neural search alone scores higher still on top-1 ({b['neural']['hit@1']}%). Hybrid is kept because the "
+                   "assignment calls for it and because keyword matching protects exact codes and rare terms "
+                   "(Q18 \"neurostimulator\", Q19 \"CPT 72148\"). "
+                   if b["neural"]["hit@1"] > b["hybrid_neural"]["hit@1"] else "")
+                + "With 20 queries, each query is 5 points, so these are directional results, not significant ones."]
     return "\n".join(out)
 
 
@@ -255,8 +268,7 @@ Raw results: `eval/results_<mode>.json`. Labels: `data/labels.json` (cases) and 
 
 Semantic search uses neural embeddings (`BAAI/bge-small-en-v1.5`, local ONNX via fastembed, no API key) and
 falls back to LSA if the model cannot load. Q16–Q22 are written to need meaning rather than shared words
-(synonyms, lay descriptions, paraphrases), which is where keyword search and LSA are weakest. The corpus is
-small (about 20 sections), so differences of one or two queries are not significant.
+(synonyms, lay descriptions, paraphrases), which is where keyword search and LSA are weakest.
 
 ## Prompt-injection resistance
 
