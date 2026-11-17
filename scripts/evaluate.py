@@ -141,26 +141,36 @@ async def eval_cases(llm):
 
 
 # ------------------------------------------------------------------ 2. retrieval
+def _rank_metrics(ix, queries, scorer, keep=None):
+    hit1 = hit3 = rr = n = 0
+    for q in queries:
+        if not q.get("expected"):
+            continue
+        ids = [h.chunk_id for h in ix.search(q["query"], service_code="72148", plan=q["plan"],
+                                             service_date=q["service_date"], k=3, scorer=scorer).hits]
+        rank = ids.index(q["expected"]) + 1 if q["expected"] in ids else 0
+        n += 1
+        hit1 += rank == 1
+        hit3 += rank > 0
+        rr += 1 / rank if rank else 0
+        if keep is not None:
+            keep.append({"id": q["id"], "query": q["query"], "expected": q["expected"],
+                         "top3": ids, "rank": rank, "note": q.get("note", "")})
+    return {"n": n, "hit@1": pct(hit1, n), "hit@3": pct(hit3, n), "mrr": round(rr / n, 3)}
+
+
 def eval_retrieval():
-    ix = get_index()
+    from app.retrieval.index import PolicyIndex
+    ix = get_index()                         # the backend the system actually runs with
+    lsa = ix if ix.dense.name == "lsa" else PolicyIndex(embeddings="lsa")
     queries = json.loads((EVAL / "retrieval_queries.json").read_text(encoding="utf-8"))
-    out = {"queries": [], "by_scorer": {}}
-    for scorer in ("hybrid", "bm25", "dense"):
-        hit1 = hit3 = rr = n = 0
-        for q in queries:
-            if not q.get("expected"):
-                continue
-            ids = [h.chunk_id for h in ix.search(q["query"], service_code="72148", plan=q["plan"],
-                                                 service_date=q["service_date"], k=3, scorer=scorer).hits]
-            rank = ids.index(q["expected"]) + 1 if q["expected"] in ids else 0
-            n += 1
-            hit1 += rank == 1
-            hit3 += rank > 0
-            rr += 1 / rank if rank else 0
-            if scorer == "hybrid":
-                out["queries"].append({"id": q["id"], "query": q["query"], "expected": q["expected"],
-                                       "top3": ids, "rank": rank, "note": q.get("note", "")})
-        out["by_scorer"][scorer] = {"n": n, "hit@1": pct(hit1, n), "hit@3": pct(hit3, n), "mrr": round(rr / n, 3)}
+    out = {"queries": [], "by_scorer": {}, "semantic_backend": ix.dense.label, "semantic_note": ix.dense_note}
+    out["by_scorer"]["bm25"] = _rank_metrics(lsa, queries, "bm25")
+    out["by_scorer"]["lsa"] = _rank_metrics(lsa, queries, "dense")
+    out["by_scorer"]["hybrid_lsa"] = _rank_metrics(lsa, queries, "hybrid", keep=out["queries"] if ix is lsa else None)
+    if ix.dense.name == "neural":
+        out["by_scorer"]["neural"] = _rank_metrics(ix, queries, "dense")
+        out["by_scorer"]["hybrid_neural"] = _rank_metrics(ix, queries, "hybrid", keep=out["queries"])
 
     version = []
     for q in queries:

@@ -1,7 +1,7 @@
 {
   "mode": "rules",
-  "generated_at": "2026-11-16T22:57:10+00:00",
-  "git_commit": "cf36609",
+  "generated_at": "2026-11-17T03:38:22+00:00",
+  "git_commit": "a574a97",
   "model": null,
   "summary": {
     "recommendation_accuracy_pct": 100.0,
@@ -17,8 +17,8 @@
     "injection_variants_used_as_evidence": "0/5",
     "reliability_scenarios_ok": "6/6",
     "tool_success_pct": 100.0,
-    "latency_ms_p50": 9.2,
-    "latency_ms_p95": 31.0
+    "latency_ms_p50": 8.1,
+    "latency_ms_p95": 264.4
   },
   "cases": [
     {
@@ -40,7 +40,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 45.2,
+      "latency_ms": 432.4,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -65,7 +65,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 9.6,
+      "latency_ms": 8.7,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -94,7 +94,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 9.0,
+      "latency_ms": 7.8,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -123,7 +123,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 9.3,
+      "latency_ms": 8.1,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -148,7 +148,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 9.4,
+      "latency_ms": 8.4,
       "tool_calls": 7,
       "tool_failures": 0,
       "summary_source": "template",
@@ -173,7 +173,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 9.2,
+      "latency_ms": 12.3,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -198,7 +198,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 8.4,
+      "latency_ms": 7.6,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -227,7 +227,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 9.2,
+      "latency_ms": 8.0,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -252,7 +252,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 9.0,
+      "latency_ms": 7.5,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -503,25 +503,27 @@
       }
     ],
     "by_scorer": {
-      "hybrid": {
-        "n": 20,
-        "hit@1": 85.0,
-        "hit@3": 95.0,
-        "mrr": 0.9
-      },
       "bm25": {
         "n": 20,
         "hit@1": 85.0,
         "hit@3": 95.0,
         "mrr": 0.892
       },
-      "dense": {
+      "lsa": {
         "n": 20,
         "hit@1": 85.0,
         "hit@3": 100.0,
         "mrr": 0.917
+      },
+      "hybrid_lsa": {
+        "n": 20,
+        "hit@1": 85.0,
+        "hit@3": 95.0,
+        "mrr": 0.9
       }
     },
+    "semantic_backend": "LSA (TF-IDF + SVD)",
+    "semantic_note": "neural embeddings unavailable (RuntimeError); fell back to LSA",
     "version_tests": [
       {
         "id": "Q14",
@@ -643,7 +645,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 7.3
+      "latency_ms": 6.4
     },
     {
       "scenario": "Full coverage outage (A2A + MCP tools)",
@@ -654,7 +656,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 2,
-      "latency_ms": 7.9
+      "latency_ms": 7.0
     },
     {
       "scenario": "MCP server unreachable",
@@ -665,7 +667,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 0,
       "tool_failures": 0,
-      "latency_ms": 27.2
+      "latency_ms": 17.8
     },
     {
       "scenario": "Tool-call budget exhausted (limit 3)",
@@ -676,7 +678,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 3,
       "tool_failures": 0,
-      "latency_ms": 8.8
+      "latency_ms": 5.7
     },
     {
       "scenario": "Model returns invalid JSON",
@@ -687,7 +689,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 5,
       "tool_failures": 0,
-      "latency_ms": 10.0
+      "latency_ms": 10.3
     },
     {
       "scenario": "Model unavailable",
@@ -698,7 +700,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 9.5
+      "latency_ms": 8.7
     }
   ],
   "tools": {
@@ -723,17 +725,17 @@
       "get_clinical_notes": {
         "calls": 9,
         "success_pct": 100.0,
-        "avg_ms": 0.5
+        "avg_ms": 0.4
       },
       "search_fhir": {
         "calls": 27,
         "success_pct": 100.0,
-        "avg_ms": 0.8
+        "avg_ms": 0.6
       },
       "search_policies": {
         "calls": 9,
         "success_pct": 100.0,
-        "avg_ms": 1.6
+        "avg_ms": 1.3
       }
     }
   },

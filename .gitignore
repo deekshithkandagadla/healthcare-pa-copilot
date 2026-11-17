@@ -5,3 +5,4 @@ tests/.runtime/
 .env
 *.pyc
 .venv/
+.models/

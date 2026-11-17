@@ -216,7 +216,8 @@ class Supervisor:
         evidence.update(pol.evidence)
         uncertainties += pol.uncertainties
         status.append(AgentStatus(agent="policy_rag", status="ok" if pol.policy else "degraded", detail=pol.reason[:200]))
-        await emitter.custom("retrieval", {"hits": [h["chunk_id"] for h in pol.retrieval.get("hits", [])],
+        await emitter.custom("retrieval", {"semantic_backend": pol.retrieval.get("semantic_backend"),
+                                           "hits": [h["chunk_id"] for h in pol.retrieval.get("hits", [])],
                                            "excluded_better_ranked": pol.retrieval.get("excluded_better_ranked", [])})
         await emitter.step("policy_rag", started=False)
         if not pol.policy:

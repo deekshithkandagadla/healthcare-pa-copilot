@@ -1,7 +1,7 @@
 {
   "mode": "scripted",
-  "generated_at": "2026-11-16T22:57:12+00:00",
-  "git_commit": "cf36609",
+  "generated_at": "2026-11-17T03:38:25+00:00",
+  "git_commit": "a574a97",
   "model": null,
   "summary": {
     "recommendation_accuracy_pct": 100.0,
@@ -17,8 +17,8 @@
     "injection_variants_used_as_evidence": "0/5",
     "reliability_scenarios_ok": "6/6",
     "tool_success_pct": 100.0,
-    "latency_ms_p50": 7.6,
-    "latency_ms_p95": 23.3
+    "latency_ms_p50": 8.5,
+    "latency_ms_p95": 283.9
   },
   "cases": [
     {
@@ -40,7 +40,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 33.6,
+      "latency_ms": 464.6,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -72,7 +72,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 7.9,
+      "latency_ms": 9.0,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -108,7 +108,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 7.4,
+      "latency_ms": 8.2,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -144,7 +144,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 7.6,
+      "latency_ms": 8.1,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -176,7 +176,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 7.8,
+      "latency_ms": 9.0,
       "tool_calls": 7,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -208,7 +208,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 7.6,
+      "latency_ms": 12.8,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -240,7 +240,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 6.9,
+      "latency_ms": 7.7,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -276,7 +276,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 7.3,
+      "latency_ms": 8.5,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -308,7 +308,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 7.0,
+      "latency_ms": 7.8,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "llm",
@@ -566,25 +566,27 @@
       }
     ],
     "by_scorer": {
-      "hybrid": {
-        "n": 20,
-        "hit@1": 85.0,
-        "hit@3": 95.0,
-        "mrr": 0.9
-      },
       "bm25": {
         "n": 20,
         "hit@1": 85.0,
         "hit@3": 95.0,
         "mrr": 0.892
       },
-      "dense": {
+      "lsa": {
         "n": 20,
         "hit@1": 85.0,
         "hit@3": 100.0,
         "mrr": 0.917
+      },
+      "hybrid_lsa": {
+        "n": 20,
+        "hit@1": 85.0,
+        "hit@3": 95.0,
+        "mrr": 0.9
       }
     },
+    "semantic_backend": "LSA (TF-IDF + SVD)",
+    "semantic_note": "neural embeddings unavailable (RuntimeError); fell back to LSA",
     "version_tests": [
       {
         "id": "Q14",
@@ -706,7 +708,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 6.0
+      "latency_ms": 6.9
     },
     {
       "scenario": "Full coverage outage (A2A + MCP tools)",
@@ -717,7 +719,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 2,
-      "latency_ms": 6.4
+      "latency_ms": 7.1
     },
     {
       "scenario": "MCP server unreachable",
@@ -728,7 +730,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 0,
       "tool_failures": 0,
-      "latency_ms": 24.6
+      "latency_ms": 18.1
     },
     {
       "scenario": "Tool-call budget exhausted (limit 3)",
@@ -739,7 +741,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 3,
       "tool_failures": 0,
-      "latency_ms": 7.6
+      "latency_ms": 5.8
     },
     {
       "scenario": "Model returns invalid JSON",
@@ -750,7 +752,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 5,
       "tool_failures": 0,
-      "latency_ms": 8.3
+      "latency_ms": 9.7
     },
     {
       "scenario": "Model unavailable",
@@ -761,7 +763,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 7.9
+      "latency_ms": 8.4
     }
   ],
   "tools": {
@@ -776,7 +778,7 @@
       "check_eligibility": {
         "calls": 1,
         "success_pct": 100.0,
-        "avg_ms": 0.2
+        "avg_ms": 0.3
       },
       "get_authorization_history": {
         "calls": 1,

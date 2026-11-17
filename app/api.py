@@ -56,7 +56,9 @@ def _case_summary(st) -> dict:
 
 @app.get("/api/health")
 def health():
-    return {"status": "ok", "mcp": "remote" if config.MCP_URL else "in-process",
+    ix = get_index()
+    return {"status": "ok", "semantic_search": ix.dense.label, "semantic_note": ix.dense_note,
+            "mcp": "remote" if config.MCP_URL else "in-process",
             "a2a": "remote" if config.COVERAGE_A2A_URL else "in-process"}
 
 

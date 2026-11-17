@@ -8,6 +8,7 @@ import pytest
 
 # Tests never call a real model (no cost, deterministic), even if .env holds a key.
 os.environ["LLM_PROVIDER"] = "none"
+os.environ["EMBEDDINGS"] = "lsa"   # deterministic and offline; neural path tested with a stand-in model
 os.environ.setdefault("PA_RUNTIME_DIR", str(Path(__file__).parent / ".runtime"))
 logging.getLogger("httpx").setLevel(logging.WARNING)
 

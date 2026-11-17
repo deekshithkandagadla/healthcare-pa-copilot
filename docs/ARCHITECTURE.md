@@ -48,7 +48,7 @@ the API runs MCP and A2A in-process over in-memory transports (used by the tests
 |---|---|---|---|
 | **Supervisor** (`agents/supervisor.py`) | Routes work, runs clinical and coverage in parallel, holds shared case state, enforces the tool budget and a single retry, detects cross-agent disagreement, composes and validates the result | A2A client, MCP (re-check) | `PAResult` + AG-UI events |
 | **Clinical evidence** (`agents/clinical.py`, `extract.py`) | Diagnoses, encounters, observations, note excerpts. Separates **facts**, **ambiguities** and **gaps**. Quarantines injected or unverified documents | `search_fhir`, `get_clinical_notes` | Facts with evidence IDs, conflicts, gaps |
-| **Policy & RAG** (`agents/policy.py`, `retrieval/index.py`) | Picks the policy version in effect; retrieves criteria, exceptions and exclusions with section IDs; shows superseded documents that ranked higher | `search_policies` | Policy, exceptions, citations, retrieval trace |
+| **Policy & RAG** (`agents/policy.py`, `retrieval/index.py`): hybrid search = BM25 keyword + neural embeddings (`BAAI/bge-small-en-v1.5`), fused with RRF | Picks the policy version in effect; retrieves criteria, exceptions and exclusions with section IDs; shows superseded documents that ranked higher | `search_policies` | Policy, exceptions, citations, retrieval trace |
 | **Coverage & eligibility** (`agents/coverage.py`) | Eligibility on the service date, plan, prior authorizations in the last 12 months | `check_eligibility`, `get_authorization_history` | Eligibility, plan, prior-imaging fact with evidence |
 | **Criteria & quality** (`agents/criteria.py`, `models.py`) | Maps cited facts to criteria with fixed rules, evaluates exclusions, re-verifies every citation, validates the output schema | none | Criterion and exclusion results, citation problems |
 
@@ -168,7 +168,7 @@ timestamp, the actor, the run ID and the system recommendation, but no clinical 
 |---|---|---|
 | Rules decide, LLM assists | Provable grounding, reproducible evaluation, no model-made denials | Less flexible than end-to-end LLM reasoning; rules must be written per policy |
 | Criteria as structured front matter beside the policy text | One source for retrieval and rules; exact thresholds | Policies must be authored or converted into this format |
-| Offline LSA as the semantic scorer | Runs with no key or download; deterministic | Weaker on synonyms than neural embeddings (see `EVALUATION.md`) |
+| Local neural embeddings (bge-small-en-v1.5 via fastembed/ONNX), LSA fallback | No API key, no PHI leaves the machine, runs on CPU; still works offline | ~130 MB one-time download; a small model is weaker than large hosted embedders |
 | Plain-Python supervisor, not a framework | Every decision point is visible and testable | Re-implements what LangGraph-style frameworks give for free |
 | Hand-built A2A subset | Small, readable, no SDK churn | Not the full spec (no streaming or task store) |
 | In-memory case state + JSONL audit | Zero setup | Not durable or multi-user |
@@ -199,7 +199,7 @@ measures it on all 9 cases.
   structure contain the other two, but a malicious note from a *trusted* source that avoids the patterns could
   still contribute facts.
 - **Retrieval** is evaluated on a small corpus (about 20 sections, 20 queries), where hybrid ranking does not beat
-  either single method. Synonym queries expose the limits of LSA.
+  either single method by much; differences of one or two queries are not significant.
 - **LLM output varies from run to run** (this SDK version exposes no sampling controls). All of it is verified, but
   verification proves a quote exists, not that it was labeled correctly; the number and negation checks catch
   common mislabels, not all.
@@ -209,6 +209,6 @@ measures it on all 9 cases.
 ## Unfinished / next steps
 
 - Trained injection classifier; trust levels per source instead of trusted/unverified.
-- Neural embeddings and a larger policy corpus (more services and policy families).
+- A larger policy corpus (more services and policy families) and a vector store, to measure retrieval meaningfully.
 - Durable case store and authentication for multi-user review.
 - A2A streaming for long-running agents; MCP authorization.

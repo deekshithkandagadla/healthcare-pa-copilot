@@ -16,7 +16,7 @@ python -m venv .venv
 source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 76 tests
+pytest                               # 77 tests
 python scripts/evaluate.py           # evaluation report -> docs/EVALUATION.md (add --mode llm for Claude)
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
@@ -27,6 +27,10 @@ stays busy afterwards, close that terminal window.
 Or with Docker: `docker compose up --build`, then open http://localhost:8100.
 
 No API key is needed: without one, the pipeline runs rule-based and fully deterministic.
+
+Semantic search uses a local embedding model, `BAAI/bge-small-en-v1.5` (via fastembed, CPU, no API key). The
+first start downloads it once (about 130 MB) into `.models/`. Without internet it falls back to LSA, and
+`/api/health` and each retrieval event say which one is in use. `EMBEDDINGS=lsa` forces the fallback.
 
 ### Turning on Claude (Anthropic)
 
@@ -92,7 +96,7 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 76 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 77 tests.
 
 Evaluation: `scripts/evaluate.py` scores all 9 labeled cases, 20 retrieval queries, 5 prompt-injection
 variants and 6 failure scenarios, and writes `docs/EVALUATION.md` with a full multi-agent trace.
@@ -103,12 +107,12 @@ Next: the full architecture note and the demo video.
 
 - **Assumptions:** synthetic data only (9 patients, one service: lumbar MRI, CPT 72148); labels written by the
   developer; EHR documents are trusted and anything else (e.g. fax) is unverified until a reviewer confirms it.
-- **Shortcuts:** pattern-based note extraction by default (Claude adds coverage when enabled); offline LSA instead of
-  neural embeddings; in-memory case state with a JSONL audit file; a hand-built subset of A2A; no authentication.
+- **Shortcuts:** pattern-based note extraction by default (Claude adds coverage when enabled); a small local embedding model
+  (bge-small-en-v1.5) for semantic search, with LSA as an offline fallback; in-memory case state with a JSONL audit file; a hand-built subset of A2A; no authentication.
 - **Costs:** rules-only mode is free. With Claude Sonnet 5.5, about $0.01 per case at list price
   (measured by `scripts/evaluate.py --mode llm`).
 - **Unfinished:** trained injection classifier (pattern detection catches 3 of 5 test variants; the other two are
-  contained by source trust and the rules), neural embeddings on a larger corpus, durable multi-user storage,
+  contained by source trust and the rules), a larger policy corpus with a vector store, durable multi-user storage,
   A2A streaming and MCP authorization.
 - **Secrets:** none in the repo. The API key lives in `.env`, which is gitignored.
 

@@ -2,9 +2,12 @@
 
 * Ingests two document types: Markdown policies (with a JSON front-matter block) and the JSON
   exception register.
-* Ranks with BM25 (keyword) and a dense vector score, fused with reciprocal rank fusion.
-  The dense scorer is LSA (TF-IDF + truncated SVD) so the demo runs offline with no API key;
-  set EMBEDDINGS=sentence-transformers to use a neural embedder instead.
+* Ranks with BM25 (keyword) and dense vector similarity (semantic), fused with reciprocal rank fusion.
+  Semantic backend (EMBEDDINGS env):
+    auto (default) - neural embeddings, BAAI/bge-small-en-v1.5 via fastembed (local ONNX, no API key;
+                     downloaded once, ~130 MB, cached in .models/). Falls back to LSA if it cannot load.
+    neural         - neural embeddings; fail if unavailable.
+    lsa            - LSA (TF-IDF + truncated SVD): offline, deterministic. Used by the test suite.
 * Filters by policy family, plan, service code and effective date *after* ranking the full
   corpus, so the result can show exactly which better-scoring documents were excluded and why.
 * Every chunk has a stable ID: <doc_id>#<section>.
@@ -12,6 +15,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 import re
 from datetime import date
@@ -26,6 +30,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 
 from app import config
 
+log = logging.getLogger("pa.retrieval")
 _TOKEN = re.compile(r"[a-z0-9]+")
 _SECTION = re.compile(r"^#{2,3}\s+(S\d+(?:\.\d+)?)\s+(.*)$")
 
@@ -70,6 +75,7 @@ class Excluded(BaseModel):
 
 class SearchResult(BaseModel):
     query: str
+    semantic_backend: str = ""
     filters: dict
     hits: list[Hit]
     excluded_better_ranked: list[Excluded]
@@ -118,6 +124,9 @@ def in_effect(start: str, end: str | None, on: str) -> bool:
 
 
 class _LsaEmbedder:
+    name = "lsa"
+    label = "LSA (TF-IDF + SVD)"
+
     def __init__(self, texts: list[str]):
         self.vec = TfidfVectorizer(sublinear_tf=True, ngram_range=(1, 2), stop_words="english")
         m = self.vec.fit_transform(texts)
@@ -133,20 +142,54 @@ class _LsaEmbedder:
         return self.doc @ q[0]
 
 
-class _StEmbedder:  # optional neural embedder
+class _NeuralEmbedder:
+    """Dense neural embeddings (bge-small-en-v1.5 by default) via fastembed / ONNX Runtime, on CPU."""
+    name = "neural"
+
     def __init__(self, texts: list[str]):
-        from sentence_transformers import SentenceTransformer
-        self.model = SentenceTransformer(os.getenv("EMBED_MODEL", "all-MiniLM-L6-v2"))
-        self.doc = self.model.encode(texts, normalize_embeddings=True)
+        from fastembed import TextEmbedding
+        self.model_name = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
+        cache = os.getenv("FASTEMBED_CACHE_PATH", str(config.ROOT / ".models"))
+        try:  # cached copy first: instant, no network
+            self.model = TextEmbedding(model_name=self.model_name, cache_dir=cache, local_files_only=True)
+        except Exception:
+            # Not cached. fastembed retries a failed download with 3/9/27 s back-off, which offline would
+            # delay startup ~40 s before the LSA fallback, so check the model host is reachable first.
+            import httpx
+            try:
+                httpx.head("https://huggingface.co", timeout=4, follow_redirects=True).raise_for_status()
+            except Exception as e:
+                raise RuntimeError(f"model not cached and download host unreachable ({type(e).__name__})") from e
+            log.info("Downloading embedding model %s (one time, ~130 MB)", self.model_name)
+            self.model = TextEmbedding(model_name=self.model_name, cache_dir=cache)
+        self.doc = self._norm(np.array(list(self.model.passage_embed(texts))))
+        self.label = f"neural ({self.model_name})"
+
+    @staticmethod
+    def _norm(x):
+        return x / (np.linalg.norm(x, axis=-1, keepdims=True) + 1e-9)
 
     def score(self, query: str) -> np.ndarray:
-        return self.doc @ self.model.encode([query], normalize_embeddings=True)[0]
+        # query_embed adds the model's retrieval instruction prefix for queries.
+        return self.doc @ self._norm(np.array(list(self.model.query_embed([query])))[0])
+
+
+def _make_dense(texts: list[str], mode: str):
+    if mode == "lsa":
+        return _LsaEmbedder(texts), "LSA selected"
+    try:
+        return _NeuralEmbedder(texts), "neural embeddings loaded"
+    except Exception as e:  # missing package, no network on first download, bad model name
+        if mode == "neural":
+            raise
+        log.warning("Neural embeddings unavailable (%s: %s); falling back to LSA", type(e).__name__, e)
+        return _LsaEmbedder(texts), f"neural embeddings unavailable ({type(e).__name__}); fell back to LSA"
 
 
 class PolicyIndex:
     RRF_K = 60
 
-    def __init__(self, data_dir: Path = config.DATA_DIR):
+    def __init__(self, data_dir: Path = config.DATA_DIR, embeddings: str | None = None):
         self.policies: dict[str, dict] = {}
         self.chunks: list[Chunk] = []
         for p in sorted((data_dir / "policies").glob("*.md")):
@@ -158,7 +201,7 @@ class PolicyIndex:
         self.by_id = {c.chunk_id: c for c in self.chunks}
         texts = [f"{c.heading}. {c.text}" for c in self.chunks]
         self.bm25 = BM25Okapi([tokenize(t) for t in texts])
-        self.dense = _StEmbedder(texts) if os.getenv("EMBEDDINGS") == "sentence-transformers" else _LsaEmbedder(texts)
+        self.dense, self.dense_note = _make_dense(texts, (embeddings or os.getenv("EMBEDDINGS", "auto")).lower())
 
     # ---- ranking -------------------------------------------------------------------------
     def _rank(self, query: str, scorer: str = "hybrid") -> list[tuple[int, float, int, int]]:
@@ -203,7 +246,7 @@ class PolicyIndex:
             if len(hits) < k:
                 hits.append(Hit(chunk_id=c.chunk_id, doc_id=c.doc_id, section=c.section, heading=c.heading,
                                 text=c.text, score=round(score, 5), rank_unfiltered=pos, bm25_rank=br, dense_rank=dr))
-        return SearchResult(query=query, filters={"service_code": service_code, "plan": plan,
+        return SearchResult(query=query, semantic_backend=self.dense.label, filters={"service_code": service_code, "plan": plan,
                                                   "service_date": service_date, "family": family},
                             hits=hits, excluded_better_ranked=excluded)
 

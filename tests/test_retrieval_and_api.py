@@ -119,3 +119,41 @@ def test_submit_new_case_and_investigate():
     assert res["requires_human_review"]
     assert [a["action"] for a in c.get(f"/api/cases/{new['case_id']}/audit").json()] == ["case_submitted",
                                                                                          "investigation_completed"]
+
+
+def test_neural_backend_path_and_fallback(monkeypatch):
+    """Neural path with a stand-in for fastembed (no model download in CI); real model checked by evaluate.py."""
+    import numpy as np
+    import fastembed
+    from app.retrieval.index import PolicyIndex, tokenize
+
+    vocab = ["physiotherapy", "physical", "therapy", "pacemaker", "device", "lawsuit", "litigation", "sciatica",
+             "radiating", "knee", "weeks", "exception", "rural", "red", "flag"]
+    syn = {"physiotherapy": "therapy", "lawsuit": "litigation", "sciatica": "radiating"}
+
+    class FakeModel:
+        def __init__(self, model_name, cache_dir=None, **kwargs):
+            self.model_name = model_name
+        def _vec(self, t):
+            toks = [syn.get(w, w) for w in tokenize(t)]
+            return np.array([toks.count(syn.get(v, v)) for v in vocab], dtype=float) + 1e-3
+        def passage_embed(self, texts):
+            return (self._vec(t) for t in texts)
+        def query_embed(self, texts):
+            return (self._vec(t) for t in texts)
+
+    monkeypatch.setattr(fastembed, "TextEmbedding", FakeModel)
+    ix = PolicyIndex(embeddings="neural")
+    assert ix.dense.name == "neural" and "bge-small" in ix.dense.label
+    r = ix.search("imaging needed for a lawsuit", service_code="72148", plan="PPO-GOLD",
+                  service_date="2026-10-01", k=3, scorer="dense")
+    assert r.hits[0].chunk_id == "POL-MRI-LUMBAR-V3#S5.2" and r.semantic_backend.startswith("neural")
+
+    def boom(*a, **k):
+        raise OSError("no network")
+    monkeypatch.setattr(fastembed, "TextEmbedding", boom)
+    ix2 = PolicyIndex(embeddings="auto")
+    assert ix2.dense.name == "lsa" and "fell back to LSA" in ix2.dense_note
+    import pytest
+    with pytest.raises(Exception):   # neural mode never silently falls back
+        PolicyIndex(embeddings="neural")

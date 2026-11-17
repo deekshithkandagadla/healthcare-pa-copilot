@@ -9,3 +9,4 @@ numpy
 pytest==9.1.1
 pytest-asyncio==1.5.0
 anthropic==2.8.0
+fastembed==0.9.1

@@ -71,11 +71,22 @@ def _cases(res):
 
 
 def _retrieval(rt):
-    out = ["| Ranking | Queries | Hit@1 | Hit@3 | MRR |", "|---|---|---|---|---|"]
-    names = {"hybrid": "**Hybrid (BM25 + LSA, RRF)** (used)", "bm25": "Keyword only (BM25)", "dense": "Semantic only (LSA)"}
-    for k, v in rt["by_scorer"].items():
-        out.append(f"| {names[k]} | {v['n']} | {v['hit@1']}% | {v['hit@3']}% | {v['mrr']} |")
-    out += ["", "Per-query results (hybrid, top 3 after filtering by plan, service and service date):", "",
+    used = "hybrid_neural" if "hybrid_neural" in rt["by_scorer"] else "hybrid_lsa"
+    names = {"bm25": "Keyword only (BM25)", "lsa": "Semantic only: LSA (TF-IDF + SVD)",
+             "neural": "Semantic only: neural (bge-small-en-v1.5)", "hybrid_lsa": "Hybrid: BM25 + LSA (RRF)",
+             "hybrid_neural": "Hybrid: BM25 + neural (RRF)"}
+    out = [f"Semantic backend in this run: **{rt.get('semantic_backend', 'LSA')}**"
+           + (f" ({rt['semantic_note']})" if "fell back" in rt.get("semantic_note", "") else "") + ".", "",
+           "| Ranking | Queries | Hit@1 | Hit@3 | MRR |", "|---|---|---|---|---|"]
+    for k in ("bm25", "lsa", "neural", "hybrid_lsa", "hybrid_neural"):
+        if k in rt["by_scorer"]:
+            v = rt["by_scorer"][k]
+            label = f"**{names[k]}** (used)" if k == used else names[k]
+            out.append(f"| {label} | {v['n']} | {v['hit@1']}% | {v['hit@3']}% | {v['mrr']} |")
+    if "neural" not in rt["by_scorer"]:
+        out.append("\nNeural rows appear when the run can load the embedding model "
+                   "(`python scripts/evaluate.py` on a machine with internet for the first download).")
+    out += ["", f"Per-query results ({names[used]}, top 3 after filtering by plan, service and service date):", "",
             "| Query | Expected section | Rank | Note |", "|---|---|---|---|"]
     for q in rt["queries"]:
         out.append(f"| {q['id']} \"{q['query']}\" | `{q['expected']}` | {q['rank'] or 'not in top 3'} | {q['note']} |")
@@ -242,9 +253,10 @@ Raw results: `eval/results_<mode>.json`. Labels: `data/labels.json` (cases) and 
 
 {_retrieval(base['retrieval'])}
 
-With about 20 sections in the corpus, hybrid ranking does not beat either single method on hit@1. The
-synonym queries (Q16, Q20, Q22) show the limit of an offline LSA "semantic" scorer. A neural embedder
-(`EMBEDDINGS=sentence-transformers`) is the next step, and it is only worth measuring on a larger corpus.
+Semantic search uses neural embeddings (`BAAI/bge-small-en-v1.5`, local ONNX via fastembed, no API key) and
+falls back to LSA if the model cannot load. Q16–Q22 are written to need meaning rather than shared words
+(synonyms, lay descriptions, paraphrases), which is where keyword search and LSA are weakest. The corpus is
+small (about 20 sections), so differences of one or two queries are not significant.
 
 ## Prompt-injection resistance
 
