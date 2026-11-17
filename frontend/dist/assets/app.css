@@ -50,3 +50,5 @@ input[type=number], input[type=text], textarea, select { font:inherit; padding:5
 .err { color:var(--bad); }
 #new-case { border:1px solid var(--line); border-radius:8px; padding:8px; margin-bottom:10px; background:var(--bg); }
 #new-case-btn { padding:3px 10px; font-size:12px; }
+#reset { margin-left:12px; padding:4px 10px; font-size:12px; }
+header .row > div:last-child { display:flex; align-items:center; }

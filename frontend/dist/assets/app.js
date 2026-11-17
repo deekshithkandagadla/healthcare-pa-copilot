@@ -196,6 +196,14 @@ $("#new-case").onsubmit = async (e) => {
   await select(d.case_id);
 };
 
+$("#reset").onclick = async () => {
+  if (!confirm("Clear all investigations, reviewer inputs and new cases?")) return;
+  await fetch("/api/admin/reset", { method: "POST" });
+  current = null; $("#outage").value = "none"; $("#events").innerHTML = ""; $("#agents").innerHTML = "";
+  $("#surface-root").innerHTML = `<p class="muted">Select a case and run an investigation.</p>`; $("#audit").innerHTML = "";
+  $("#run").disabled = true; loadCases();
+};
+
 $("#run").onclick = investigate;
 $("#outage").onchange = (e) => fetch("/api/admin/outage", { method: "POST", headers: { "Content-Type": "application/json" },
   body: JSON.stringify({ mode: e.target.value }) });

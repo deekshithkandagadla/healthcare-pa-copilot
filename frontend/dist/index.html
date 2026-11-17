@@ -7,15 +7,16 @@
 <link rel="stylesheet" href="/assets/app.css">
 </head>
 <body>
-<header>
+<header><div class="row" style="width:100%">
   <div><strong>Prior Authorization Copilot</strong> <span class="muted">· synthetic data · decision support only</span></div>
-  <label class="toggle">Coverage service:
+  <div><label class="toggle">Coverage service:
     <select id="outage">
       <option value="none">Normal</option>
       <option value="a2a">A2A agent down (fallback)</option>
       <option value="full">Full outage (error state)</option>
     </select></label>
-</header>
+  <button class="secondary" id="reset">Reset demo</button></div>
+</div></header>
 <main>
   <aside id="cases">
     <div class="row"><h2>Cases</h2><button class="secondary" id="new-case-btn">+ New case</button></div>

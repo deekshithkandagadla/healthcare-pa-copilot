@@ -157,3 +157,15 @@ def test_neural_backend_path_and_fallback(monkeypatch):
     import pytest
     with pytest.raises(Exception):   # neural mode never silently falls back
         PolicyIndex(embeddings="neural")
+
+
+def test_reset_demo_clears_state():
+    from app.api import app
+    c = TestClient(app)
+    _run(c, "PA-001")
+    c.post("/api/cases", json={"patient_id": "PT-001", "service_date": "2026-10-01"})
+    c.post("/api/admin/outage", json={"mode": "a2a"})
+    assert c.post("/api/admin/reset").json()["mode"] == "none"
+    cases = c.get("/api/cases").json()
+    assert len(cases) == 9 and all(x["runs"] == 0 and x["status"] == "new" for x in cases)
+    assert c.get("/api/admin/outage").json()["mode"] == "none" and c.get("/api/cases/PA-001/audit").json() == []

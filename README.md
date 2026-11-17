@@ -16,13 +16,15 @@ python -m venv .venv
 source .venv/bin/activate            # Windows Git Bash: source .venv/Scripts/activate
 pip install -r requirements.txt
 python scripts/generate_data.py      # regenerate the synthetic dataset (already committed)
-pytest                               # 77 tests
+pytest                               # 78 tests
 python scripts/evaluate.py           # evaluation report -> docs/EVALUATION.md (add --mode llm for Claude)
 scripts/run_all.sh                   # 4 services, UI at http://127.0.0.1:8100
 ```
 
-On Windows, run the commands in Git Bash (or WSL). Stop the services with Ctrl+C; if a port
-stays busy afterwards, close that terminal window.
+On Windows, run the commands in Git Bash (or WSL). Stop the services with Ctrl+C. If `run_all.sh` says a port
+is already in use, an earlier run is still alive (Ctrl+C in Git Bash does not always stop background
+processes): run `scripts/stop_all.sh`, then start again. Case state lives in memory, so a fresh start is always
+empty; **Reset demo** (top right) clears it without restarting.
 
 Or with Docker: `docker compose up --build`, then open http://localhost:8100.
 
@@ -96,7 +98,7 @@ The case moves to MEETS_CRITERIA, and the reviewer's input becomes cited evidenc
 
 Done: synthetic data and generator, mock FHIR API, MCP server, A2A coverage service with fallback,
 hybrid version-aware retrieval, the five agent roles, AG-UI streaming, A2UI catalog and renderer,
-reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 77 tests.
+reviewer actions with an audit trail, the Anthropic LLM layer with verification and fallbacks, and 78 tests.
 
 Evaluation: `scripts/evaluate.py` scores all 9 labeled cases, 20 retrieval queries, 5 prompt-injection
 variants and 6 failure scenarios, and writes `docs/EVALUATION.md` with a full multi-agent trace.

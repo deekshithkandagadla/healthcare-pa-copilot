@@ -198,6 +198,14 @@ def audit(case_id: str):
     return [a for a in store.audit if a["case_id"] == case_id]
 
 
+@app.post("/api/admin/reset")
+async def reset_demo():
+    """Demo control: clear all investigations, reviewer inputs and new cases; coverage back to Normal."""
+    store.reset()
+    await outage({"mode": "none"})
+    return {"cases": len(store.cases), "mode": "none"}
+
+
 COVERAGE_TOOLS = ["check_eligibility", "get_authorization_history"]
 _outage_mode = "none"
 

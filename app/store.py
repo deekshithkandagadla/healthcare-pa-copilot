@@ -38,12 +38,19 @@ class CaseState:
 
 class CaseStore:
     def __init__(self, persist: bool = True):
+        self.persist = persist
+        self.reset(log=False)
+
+    def reset(self, log: bool = True) -> None:
+        """Back to the built-in cases, uninvestigated. The audit file keeps the reset as an entry."""
         self.cases: dict[str, CaseState] = {}
         self.audit: list[dict] = []
-        self.persist = persist
         for f in sorted((config.DATA_DIR / "cases").glob("*.json")):
             c = json.loads(f.read_text(encoding="utf-8"))
             self.cases[c["case_id"]] = CaseState(case=c)
+        if log:
+            self.log("*", "reviewer-demo", "demo_reset")
+            self.audit.clear()
 
     def log(self, case_id: str, actor: str, action: str, **detail) -> dict:
         entry = {"audit_id": f"AUD-{uuid.uuid4().hex[:10]}", "timestamp": _now(), "case_id": case_id,
