@@ -57,6 +57,11 @@ function handle(ev) {
   if (ev.type === "STATE_SNAPSHOT" && ev.snapshot.agents) { agentState = { ...ev.snapshot.agents }; drawAgents(); }
   if (ev.type === "STATE_DELTA") { ev.delta.forEach((op) => { agentState[op.path.split("/").pop()] = op.value; }); drawAgents(); }
   if (ev.type === "STEP_STARTED") { agentState[ev.stepName] = "running"; drawAgents(); }
+  if (ev.type === "STEP_FINISHED" && agentState[ev.stepName] === "running") { agentState[ev.stepName] = "done"; drawAgents(); }
+  if (ev.type === "RUN_FINISHED") {
+    Object.keys(agentState).forEach((k) => { if (agentState[k] === "running" || agentState[k] === "pending") agentState[k] = "done"; });
+    drawAgents();
+  }
   if (ev.type === "CUSTOM" && ev.name === "a2ui") renderSurface(ev.value);
 }
 function drawAgents() {
@@ -88,7 +93,9 @@ const CATALOG = {
       ${p.red_flag ? '<span class="pill s-NOT_SUPPORTED">RED FLAG · EXPEDITE</span>' : ""}</div>
       <div class="muted">Policy ${esc(p.policy_id)} · ${p.requires_human_review ? "human review required" : "no open issues"}</div>
       <p>${p.summary_source === "llm" ? '<span class="pill">AI summary · citations verified</span> ' : ""}${esc(p.summary)}</p><div class="muted" style="font-size:12px">${esc(p.disclaimer)}</div></div>`,
-  AlertList: (p) => `<div class="alert ${esc(p.severity)}"><b>${esc(p.title)}</b><ul>${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`,
+  AlertList: (p) => p.severity === "info"
+    ? `<p class="muted" style="font-size:12px;margin:8px 0">${esc(p.title)}: ${p.items.map(esc).join(" ")}</p>`
+    : `<div class="alert ${esc(p.severity)}"><b>${esc(p.title)}</b><ul>${p.items.map((i) => `<li>${esc(i)}</li>`).join("")}</ul></div>`,
   CriteriaChecklist: (p) => `<h3>${esc(p.title)}</h3><table><tr><th>Criterion</th><th>Status</th><th>Evidence</th></tr>${p.items.map((i) => `
       <tr><td><b>${esc(i.criterion_id)}</b> ${esc(i.description)}<div class="muted">${esc(i.rationale)}</div></td>
       <td><span class="pill s-${esc(i.status)}">${esc(i.status)}</span></td>

@@ -129,12 +129,11 @@ def build_surface(result: PAResult, policy: dict | None) -> list[dict]:
         comps.append(component("security", "AlertList", {"severity": "critical", "title": "Untrusted content quarantined",
                                                          "items": result.security_flags}))
         children.append("security")
-    if result.exclusions:
+    applied = [x for x in result.exclusions if x.status == "APPLIES"]
+    if applied:   # shown only when an exclusion applies; otherwise a one-line note under the checklist
         comps.append(component("exclusions", "AlertList", {
-            "severity": "critical" if any(x.status == "APPLIES" for x in result.exclusions) else "info",
-            "title": "Policy exclusions",
-            "items": [f"{x.exclusion_id} {x.status.replace('_', ' ').lower()}: {x.description}"
-                      + (f" [{', '.join(x.evidence_ids)}]" if x.evidence_ids else "") for x in result.exclusions]}))
+            "severity": "critical", "title": "Policy exclusion applies: physician review required",
+            "items": [f"{x.exclusion_id}: {x.description} [{', '.join(x.evidence_ids)}]" for x in applied]}))
         children.append("exclusions")
     if result.contradictions or result.uncertainties:
         comps.append(component("uncertain", "AlertList", {"severity": "warning", "title": "Contradictions and uncertainties",
@@ -148,6 +147,12 @@ def build_surface(result: PAResult, policy: dict | None) -> list[dict]:
                    "threshold": None if c.threshold is None else str(c.threshold),
                    "evidence_ids": c.evidence_ids, "rationale": c.rationale} for c in result.criteria]}))
     children.append("checklist")
+    if result.exclusions and not applied:
+        comps.append(component("exclusions_checked", "AlertList", {
+            "severity": "info", "title": "Policy exclusions checked",
+            "items": ["None documented in the record (" + ", ".join(x.exclusion_id for x in result.exclusions)
+                      + "). This means the record does not mention them, not that they are confirmed absent."]}))
+        children.append("exclusions_checked")
 
     # Case-specific form: one field per criterion that is missing or conflicting.
     rules = {c["criterion_id"]: c["rule"]["fact"] for c in (policy or {}).get("criteria", [])}

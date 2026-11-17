@@ -189,3 +189,13 @@ async def test_unverified_fax_cannot_establish_facts(supervisor, tmp_path, monke
     assert statuses["C-02"] == "MISSING" and statuses["C-03"] == "NOT_SUPPORTED"
     assert not any(e.startswith("NOTE-006") for c in r.criteria for e in c.evidence_ids)
     assert any("unverified source" in u and "NOTE-006" in u for u in r.uncertainties)
+
+
+async def test_exclusion_alert_only_when_one_applies(supervisor):
+    def ids(cid_result):
+        surface = build_surface(cid_result, get_index().policies[cid_result.applicable_policy_id])
+        return [c["id"] for c in surface[0]["surfaceUpdate"]["components"]]
+    r9, _, _ = await supervisor.run(load_case("PA-009"))
+    r1, _, _ = await supervisor.run(load_case("PA-001"))
+    assert "exclusions" in ids(r9) and "exclusions_checked" not in ids(r9)
+    assert "exclusions" not in ids(r1) and "exclusions_checked" in ids(r1)

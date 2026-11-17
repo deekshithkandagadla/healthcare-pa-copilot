@@ -240,8 +240,6 @@ class Supervisor:
         applied_x = [x for x in crit.exclusions if x.status == "APPLIES"]
         for x in applied_x:
             await emitter.custom("policy_exclusion", {"exclusion_id": x.exclusion_id, "evidence_ids": x.evidence_ids})
-            contradictions.append(f"Policy exclusion {x.exclusion_id} applies: {x.description}. "
-                                  "Physician review required; the system does not deny.")
         exc_ids = [e["exception_id"] for e in pol.exceptions]
         reason = pol.reason + (f" Exceptions applied: {exc_ids}." if exc_ids else "") + \
             (" Exceptions considered and not applied: " + "; ".join(pol.exception_notes) + "." if pol.exception_notes else "")
@@ -277,6 +275,10 @@ class Supervisor:
         uncertainties = list(dict.fromkeys(uncertainties + clinical.ambiguities))
         human = not (rec == "MEETS_CRITERIA" and not uncertainties and not clinical.security_flags and not contradictions)
         summary = self._summary(case, rec, policy_id, criteria, red_flag, missing, contradictions, clinical)
+        for x in exclusions:
+            if x.status == "APPLIES":
+                summary += (f" Policy exclusion {x.exclusion_id} applies: {x.description.rstrip('.')}. "
+                            "Physician review required; the system does not deny.")
         try:
             return PAResult(case_id=case["case_id"], recommendation=rec, applicable_policy_id=policy_id,
                             policy_selection_reason=reason, exceptions_applied=exc_ids, red_flag_pathway=red_flag,

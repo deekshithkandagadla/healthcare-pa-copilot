@@ -1,7 +1,7 @@
 {
   "mode": "rules",
-  "generated_at": "2026-11-17T03:58:33+00:00",
-  "git_commit": "8c3e26b",
+  "generated_at": "2026-11-17T18:12:21+00:00",
+  "git_commit": "8f7bbd3",
   "model": null,
   "summary": {
     "recommendation_accuracy_pct": 100.0,
@@ -17,8 +17,8 @@
     "injection_variants_used_as_evidence": "0/5",
     "reliability_scenarios_ok": "6/6",
     "tool_success_pct": 100.0,
-    "latency_ms_p50": 26.1,
-    "latency_ms_p95": 45.7
+    "latency_ms_p50": 9.9,
+    "latency_ms_p95": 20.2
   },
   "cases": [
     {
@@ -40,7 +40,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 54.9,
+      "latency_ms": 22.7,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -65,7 +65,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 31.8,
+      "latency_ms": 9.9,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -94,7 +94,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 28.6,
+      "latency_ms": 10.0,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -123,7 +123,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 25.0,
+      "latency_ms": 9.3,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -148,7 +148,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 27.7,
+      "latency_ms": 16.5,
       "tool_calls": 7,
       "tool_failures": 0,
       "summary_source": "template",
@@ -173,7 +173,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 24.4,
+      "latency_ms": 9.8,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -198,7 +198,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 21.2,
+      "latency_ms": 10.4,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -227,7 +227,7 @@
       "injection_flag_ok": true,
       "human_review": false,
       "no_auto_adverse": true,
-      "latency_ms": 22.2,
+      "latency_ms": 8.9,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -252,7 +252,7 @@
       "injection_flag_ok": true,
       "human_review": true,
       "no_auto_adverse": true,
-      "latency_ms": 26.1,
+      "latency_ms": 9.8,
       "tool_calls": 5,
       "tool_failures": 0,
       "summary_source": "template",
@@ -280,7 +280,7 @@
         "top3": [
           "POL-MRI-LUMBAR-V2#S3.2",
           "POL-MRI-LUMBAR-V2#S4",
-          "POL-MRI-LUMBAR-V2#S3.1"
+          "POL-MRI-LUMBAR-V2#S1"
         ],
         "rank": 1,
         "note": ""
@@ -291,8 +291,8 @@
         "expected": "POL-MRI-LUMBAR-V2#S3.2",
         "top3": [
           "POL-MRI-LUMBAR-V2#S3.2",
-          "POL-MRI-LUMBAR-V2#S3.1",
-          "POL-MRI-LUMBAR-V2#S2"
+          "POL-MRI-LUMBAR-V2#S2",
+          "POL-MRI-LUMBAR-V2#S3.3"
         ],
         "rank": 1,
         "note": ""
@@ -303,8 +303,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S3.2",
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.2",
-          "POL-MRI-LUMBAR-V3#S4",
-          "POL-MRI-LUMBAR-V3#S2"
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S4"
         ],
         "rank": 1,
         "note": ""
@@ -315,8 +315,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S2",
         "top3": [
           "POL-MRI-LUMBAR-V3#S2",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S1"
+          "POL-MRI-LUMBAR-V3#S1",
+          "POL-MRI-LUMBAR-V3#S3.4"
         ],
         "rank": 1,
         "note": ""
@@ -328,7 +328,7 @@
         "top3": [
           "POL-MRI-LUMBAR-V3#S5.1",
           "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S2"
+          "POL-MRI-LUMBAR-V3#S5.2"
         ],
         "rank": 1,
         "note": ""
@@ -339,8 +339,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S5.2",
         "top3": [
           "POL-MRI-LUMBAR-V3#S5.2",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S5.1"
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S3.4"
         ],
         "rank": 1,
         "note": ""
@@ -364,7 +364,7 @@
         "top3": [
           "EXC-2025-GOLD-PT#E1",
           "POL-MRI-LUMBAR-V2#S3.2",
-          "POL-MRI-LUMBAR-V2#S2"
+          "POL-MRI-LUMBAR-V2#S1"
         ],
         "rank": 1,
         "note": ""
@@ -375,8 +375,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S3.4",
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S2",
-          "POL-MRI-LUMBAR-V3#S5.2"
+          "POL-MRI-LUMBAR-V3#S3.2",
+          "POL-MRI-LUMBAR-V3#S1"
         ],
         "rank": 1,
         "note": ""
@@ -387,8 +387,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S3.3",
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.3",
-          "POL-MRI-LUMBAR-V3#S2",
-          "POL-MRI-LUMBAR-V3#S3.4"
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S2"
         ],
         "rank": 1,
         "note": ""
@@ -399,8 +399,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S3.1",
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.1",
-          "POL-MRI-LUMBAR-V3#S3.2",
-          "POL-MRI-LUMBAR-V3#S1"
+          "POL-MRI-LUMBAR-V3#S3.3",
+          "POL-MRI-LUMBAR-V3#S3.2"
         ],
         "rank": 1,
         "note": ""
@@ -411,8 +411,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S1",
         "top3": [
           "POL-MRI-LUMBAR-V3#S1",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S4"
+          "POL-MRI-LUMBAR-V3#S2",
+          "POL-MRI-LUMBAR-V3#S3.2"
         ],
         "rank": 1,
         "note": ""
@@ -424,7 +424,7 @@
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.1",
           "POL-MRI-LUMBAR-V3#S3.2",
-          "POL-MRI-LUMBAR-V3#S1"
+          "POL-MRI-LUMBAR-V3#S3.4"
         ],
         "rank": 2,
         "note": "synonym not in the policy text"
@@ -435,8 +435,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S3.3",
         "top3": [
           "POL-MRI-LUMBAR-V3#S3.3",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S2"
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S3.4"
         ],
         "rank": 1,
         "note": "synonym not in the policy text"
@@ -447,8 +447,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S5.1",
         "top3": [
           "POL-MRI-LUMBAR-V3#S5.1",
-          "POL-MRI-LUMBAR-V3#S1",
-          "POL-MRI-LUMBAR-V3#S2"
+          "POL-MRI-LUMBAR-V3#S3.4",
+          "POL-MRI-LUMBAR-V3#S3.1"
         ],
         "rank": 1,
         "note": "rare exact keyword"
@@ -460,7 +460,7 @@
         "top3": [
           "POL-MRI-LUMBAR-V3#S1",
           "POL-MRI-LUMBAR-V3#S2",
-          "POL-MRI-LUMBAR-V3#S3.4"
+          "POL-MRI-LUMBAR-V3#S5.1"
         ],
         "rank": 1,
         "note": "exact code"
@@ -470,11 +470,11 @@
         "query": "imaging needed for a lawsuit",
         "expected": "POL-MRI-LUMBAR-V3#S5.2",
         "top3": [
-          "POL-MRI-LUMBAR-V3#S5.2",
           "POL-MRI-LUMBAR-V3#S3.4",
+          "POL-MRI-LUMBAR-V3#S5.2",
           "POL-MRI-LUMBAR-V3#S2"
         ],
-        "rank": 1,
+        "rank": 2,
         "note": "paraphrase of litigation"
       },
       {
@@ -483,8 +483,8 @@
         "expected": "POL-MRI-LUMBAR-V3#S2",
         "top3": [
           "POL-MRI-LUMBAR-V3#S2",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S3.3"
+          "POL-MRI-LUMBAR-V3#S4",
+          "POL-MRI-LUMBAR-V3#S5.1"
         ],
         "rank": 1,
         "note": "lay description of red flags"
@@ -494,11 +494,11 @@
         "query": "MRI again because symptoms got worse",
         "expected": "POL-MRI-LUMBAR-V3#S3.4",
         "top3": [
-          "POL-MRI-LUMBAR-V3#S3.3",
-          "POL-MRI-LUMBAR-V3#S3.4",
-          "POL-MRI-LUMBAR-V3#S3.1"
+          "POL-MRI-LUMBAR-V3#S3.1",
+          "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S3.3"
         ],
-        "rank": 2,
+        "rank": 0,
         "note": "paraphrase"
       }
     ],
@@ -520,22 +520,10 @@
         "hit@1": 85.0,
         "hit@3": 95.0,
         "mrr": 0.9
-      },
-      "neural": {
-        "n": 20,
-        "hit@1": 95.0,
-        "hit@3": 100.0,
-        "mrr": 0.975
-      },
-      "hybrid_neural": {
-        "n": 20,
-        "hit@1": 90.0,
-        "hit@3": 100.0,
-        "mrr": 0.95
       }
     },
-    "semantic_backend": "neural (BAAI/bge-small-en-v1.5)",
-    "semantic_note": "neural embeddings loaded",
+    "semantic_backend": "LSA (TF-IDF + SVD)",
+    "semantic_note": "neural embeddings unavailable (RuntimeError); fell back to LSA",
     "version_tests": [
       {
         "id": "Q14",
@@ -550,27 +538,27 @@
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S2",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.2",
             "rank": 2,
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S3.2",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S4",
             "rank": 3,
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S3.3",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.1",
             "rank": 4,
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S3.1",
-            "rank": 5,
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.3",
+            "rank": 6,
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S4",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S2",
             "rank": 7,
             "reason": "not in effect on 2026-10-20 (effective 2024-07-01 to 2026-02-28)"
           },
@@ -657,7 +645,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 19.5
+      "latency_ms": 6.9
     },
     {
       "scenario": "Full coverage outage (A2A + MCP tools)",
@@ -668,7 +656,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 2,
-      "latency_ms": 20.1
+      "latency_ms": 7.3
     },
     {
       "scenario": "MCP server unreachable",
@@ -679,7 +667,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 0,
       "tool_failures": 0,
-      "latency_ms": 2106.9
+      "latency_ms": 18.4
     },
     {
       "scenario": "Tool-call budget exhausted (limit 3)",
@@ -690,7 +678,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 3,
       "tool_failures": 0,
-      "latency_ms": 40.7
+      "latency_ms": 6.5
     },
     {
       "scenario": "Model returns invalid JSON",
@@ -701,7 +689,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 5,
       "tool_failures": 0,
-      "latency_ms": 52.7
+      "latency_ms": 11.3
     },
     {
       "scenario": "Model unavailable",
@@ -712,7 +700,7 @@
       "ends_with_run_finished": true,
       "tool_calls": 7,
       "tool_failures": 0,
-      "latency_ms": 22.5
+      "latency_ms": 9.3
     }
   ],
   "tools": {
@@ -732,22 +720,22 @@
       "get_authorization_history": {
         "calls": 1,
         "success_pct": 100.0,
-        "avg_ms": 0.6
+        "avg_ms": 0.4
       },
       "get_clinical_notes": {
         "calls": 9,
         "success_pct": 100.0,
-        "avg_ms": 2.1
+        "avg_ms": 1.4
       },
       "search_fhir": {
         "calls": 27,
         "success_pct": 100.0,
-        "avg_ms": 1.6
+        "avg_ms": 0.8
       },
       "search_policies": {
         "calls": 9,
         "success_pct": 100.0,
-        "avg_ms": 10.1
+        "avg_ms": 1.8
       }
     }
   },
