@@ -69,3 +69,4 @@ details.raw { display:inline; margin-left:6px; }
 details.raw summary { display:inline; cursor:pointer; color:var(--muted); font-size:11px; }
 details.raw[open] { display:block; }
 details.raw pre { white-space:pre-wrap; font-size:11px; max-height:180px; overflow:auto; background:#f4f4f1; padding:6px; margin:4px 0; }
+#case-list .pill { white-space: normal; max-width: 100%; }

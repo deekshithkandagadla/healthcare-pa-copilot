@@ -5,11 +5,15 @@ const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
 let current = null;
 
+// Sidebar badges use short labels; the review banner shows the exact code.
+const SHORT_REC = { MEETS_CRITERIA: "MEETS CRITERIA", MORE_INFORMATION_NEEDED: "MORE INFO NEEDED",
+  DOES_NOT_APPEAR_TO_MEET_CRITERIA: "DOES NOT APPEAR TO MEET", SPECIALIST_REVIEW: "SPECIALIST REVIEW" };
+
 async function loadCases() {
   const cases = await (await fetch("/api/cases")).json();
   $("#case-list").innerHTML = cases.map((c) => `
     <li data-id="${esc(c.case_id)}" class="${c.case_id === current ? "active" : ""}">
-      <div class="id">${esc(c.case_id)} ${c.recommendation ? `<span class="pill r-${esc(c.recommendation)}">${esc(c.recommendation)}</span>` : ""}</div>
+      <div class="id">${esc(c.case_id)} ${c.recommendation ? `<span class="pill r-${esc(c.recommendation)}" title="${esc(c.recommendation)}">${esc(SHORT_REC[c.recommendation] || c.recommendation)}</span>` : ""}</div>
       <div class="sub">${esc(c.summary)}</div>
       <div class="sub">service ${esc(c.service_date)} · ${esc(c.status)}${c.disposition ? " · " + esc(c.disposition.disposition) : ""}</div>
     </li>`).join("");
@@ -159,7 +163,9 @@ function evLabel(id) {
 function evChips(ids) {
   const visits = ids.filter((e) => e.startsWith("Encounter/"));
   const others = ids.filter((e) => !e.startsWith("Encounter/"));
-  const chip = (e) => `<button type="button" class="chip" data-ev="${esc(e)}" title="${esc(e)}">${esc(evLabel(e))}</button>`;
+  const seen = {};
+  const chip = (e) => { const l = evLabel(e); seen[l] = (seen[l] || 0) + 1;
+    return `<button type="button" class="chip" data-ev="${esc(e)}" title="${esc(e)}">${esc(seen[l] > 1 ? `${l} (${seen[l]})` : l)}</button>`; };
   const vchip = visits.length > 2
     ? `<button type="button" class="chip" data-evs="${esc(visits.join("|"))}" title="${esc(visits.join(", "))}">${visits.length} visits</button>`
     : visits.map(chip).join("");
