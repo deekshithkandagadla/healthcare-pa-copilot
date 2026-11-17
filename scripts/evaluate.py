@@ -379,6 +379,7 @@ def percentile(xs, p):
 async def main(mode):
     llm = llm_for(mode)
     print(f"Evaluating in {mode} mode…")
+    get_index()   # load the embedding model (and download it on first run) before any timing starts
     rows, results, calls, lat = await eval_cases(llm)
     retrieval = eval_retrieval()
     citations = eval_citations(results)

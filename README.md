@@ -29,7 +29,7 @@ Or with Docker: `docker compose up --build`, then open http://localhost:8100.
 No API key is needed: without one, the pipeline runs rule-based and fully deterministic.
 
 Semantic search uses a local embedding model, `BAAI/bge-small-en-v1.5` (via fastembed, CPU, no API key). The
-first start downloads it once (about 130 MB) into `.models/`. Without internet it falls back to LSA, and
+first start downloads it once (about 67 MB) into `.models/`. Without internet it falls back to LSA, and
 `/api/health` and each retrieval event say which one is in use. `EMBEDDINGS=lsa` forces the fallback.
 
 ### Turning on Claude (Anthropic)

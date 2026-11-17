@@ -5,7 +5,7 @@
 * Ranks with BM25 (keyword) and dense vector similarity (semantic), fused with reciprocal rank fusion.
   Semantic backend (EMBEDDINGS env):
     auto (default) - neural embeddings, BAAI/bge-small-en-v1.5 via fastembed (local ONNX, no API key;
-                     downloaded once, ~130 MB, cached in .models/). Falls back to LSA if it cannot load.
+                     downloaded once, ~67 MB, cached in .models/). Falls back to LSA if it cannot load.
     neural         - neural embeddings; fail if unavailable.
     lsa            - LSA (TF-IDF + truncated SVD): offline, deterministic. Used by the test suite.
 * Filters by policy family, plan, service code and effective date *after* ranking the full
@@ -147,6 +147,14 @@ class _NeuralEmbedder:
     name = "neural"
 
     def __init__(self, texts: list[str]):
+        # Quiet expected noise: fastembed logs a cache miss as ERROR before downloading, and
+        # huggingface_hub warns about symlinks on Windows (harmless; files are copied instead).
+        os.environ.setdefault("HF_HUB_DISABLE_SYMLINKS_WARNING", "1")
+        try:
+            from loguru import logger as _loguru
+            _loguru.disable("fastembed")
+        except ImportError:
+            pass
         from fastembed import TextEmbedding
         self.model_name = os.getenv("EMBED_MODEL", "BAAI/bge-small-en-v1.5")
         cache = os.getenv("FASTEMBED_CACHE_PATH", str(config.ROOT / ".models"))
@@ -160,7 +168,7 @@ class _NeuralEmbedder:
                 httpx.head("https://huggingface.co", timeout=4, follow_redirects=True).raise_for_status()
             except Exception as e:
                 raise RuntimeError(f"model not cached and download host unreachable ({type(e).__name__})") from e
-            log.info("Downloading embedding model %s (one time, ~130 MB)", self.model_name)
+            log.info("Downloading embedding model %s (one time, ~67 MB)", self.model_name)
             self.model = TextEmbedding(model_name=self.model_name, cache_dir=cache)
         self.doc = self._norm(np.array(list(self.model.passage_embed(texts))))
         self.label = f"neural ({self.model_name})"

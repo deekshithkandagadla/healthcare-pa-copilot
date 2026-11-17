@@ -168,7 +168,7 @@ timestamp, the actor, the run ID and the system recommendation, but no clinical 
 |---|---|---|
 | Rules decide, LLM assists | Provable grounding, reproducible evaluation, no model-made denials | Less flexible than end-to-end LLM reasoning; rules must be written per policy |
 | Criteria as structured front matter beside the policy text | One source for retrieval and rules; exact thresholds | Policies must be authored or converted into this format |
-| Local neural embeddings (bge-small-en-v1.5 via fastembed/ONNX), LSA fallback | No API key, no PHI leaves the machine, runs on CPU; still works offline | ~130 MB one-time download; a small model is weaker than large hosted embedders |
+| Local neural embeddings (bge-small-en-v1.5 via fastembed/ONNX), LSA fallback | No API key, no PHI leaves the machine, runs on CPU; still works offline | ~67 MB one-time download; a small model is weaker than large hosted embedders |
 | Plain-Python supervisor, not a framework | Every decision point is visible and testable | Re-implements what LangGraph-style frameworks give for free |
 | Hand-built A2A subset | Small, readable, no SDK churn | Not the full spec (no streaming or task store) |
 | In-memory case state + JSONL audit | Zero setup | Not durable or multi-user |
