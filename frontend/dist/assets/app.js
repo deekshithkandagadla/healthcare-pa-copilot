@@ -96,7 +96,7 @@ const CATALOG = {
   MissingDocumentationForm: (p) => `<h3>${esc(p.title)}</h3><form id="missing-form">${p.fields.map((f) => `
       <label>${esc(f.label)}</label>${f.input === "boolean"
         ? `<select name="${esc(f.field_id)}"><option value="">—</option><option value="true">Yes</option><option value="false">No</option></select>`
-        : `<input type="number" name="${esc(f.field_id)}" min="${f.min ?? ""}" max="${f.max ?? ""}">`}`).join("")}
+        : `<input type="text" inputmode="numeric" autocomplete="off" name="${esc(f.field_id)}" data-min="${f.min ?? ""}" data-max="${f.max ?? ""}" placeholder="whole number, ${f.min ?? 0}–${f.max ?? ""}">`}`).join("")}
       <label>Source of this information (required)</label><input type="text" name="_note" placeholder="e.g. Outside PT records received 2026-10-06">
       <p><button type="submit">Save and re-run</button> <span id="form-msg" class="err"></span></p></form>`,
   EvidenceList: (p) => `<h3>Evidence</h3>${p.items.map((e) => `<div class="evidence-item ${e.quarantined ? "q" : ""}" id="ev-${esc(e.evidence_id)}">
@@ -130,9 +130,22 @@ function wireSurface() {
   if (mf) mf.onsubmit = async (e) => {
     e.preventDefault();
     const fd = new FormData(mf); const note = fd.get("_note");
-    for (const [k, v] of fd.entries()) {
+    // Text inputs, not type=number: a number box changes value when the mouse wheel scrolls over it.
+    const items = [];
+    for (const [k, raw] of fd.entries()) {
+      const v = String(raw).trim();
       if (k === "_note" || v === "") continue;
-      const value = v === "true" ? true : v === "false" ? false : Number(v);
+      if (v === "true" || v === "false") { items.push([k, v === "true"]); continue; }
+      const el = mf.querySelector(`[name="${k}"]`);
+      const lo = Number(el.dataset.min), hi = Number(el.dataset.max);
+      if (!/^\d+(\.\d+)?$/.test(v) || (el.dataset.min !== "" && Number(v) < lo) || (el.dataset.max !== "" && Number(v) > hi)) {
+        $("#form-msg").textContent = `"${v}" is not a valid number of weeks (${lo}–${hi}).`; return;
+      }
+      items.push([k, Number(v)]);
+    }
+    if (!items.length) { $("#form-msg").textContent = "Enter a value first."; return; }
+    if (!String(note || "").trim()) { $("#form-msg").textContent = "Say where this information came from."; return; }
+    for (const [k, value] of items) {
       const r = await fetch(`/api/cases/${current}/review`, { method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action: "supply_data", fact: k, value, note }) });
       if (!r.ok) { $("#form-msg").textContent = (await r.json()).detail; return; }
@@ -160,7 +173,7 @@ async function loadAudit() {
   if (!current) return;
   const a = await (await fetch(`/api/cases/${current}/audit`)).json();
   $("#audit").innerHTML = a.map((x) => `<li><span class="muted">${esc(x.timestamp)}</span> ${esc(x.actor)} · <b>${esc(x.action)}</b>
-    ${esc(x.recommendation || x.disposition || x.fact || "")}</li>`).join("");
+    ${esc(x.recommendation || x.disposition || (x.fact ? `${x.fact} = ${x.value}` : ""))}</li>`).join("");
 }
 
 // ------------------------------------------------------------------ new case

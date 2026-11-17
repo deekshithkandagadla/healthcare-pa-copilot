@@ -208,7 +208,7 @@ class Supervisor:
                 if "conservative_therapy_weeks" not in facts or facts["conservative_therapy_weeks"].value < facts[fname].value:
                     facts["conservative_therapy_weeks"] = facts[fname].model_copy(update={"name": "conservative_therapy_weeks"})
                 gaps = [g for g in gaps if "physical therapy" not in g.lower()]
-            await emitter.custom("reviewer_input_applied", {"fact": fname, "evidence_id": eid})
+            await emitter.custom("reviewer_input_applied", {"fact": fname, "value": facts[fname].value, "evidence_id": eid})
 
         # 4) policy
         await emitter.step("policy_rag")

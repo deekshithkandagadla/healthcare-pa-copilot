@@ -97,7 +97,7 @@ class CaseStore:
         item = {"review_id": f"RV-{uuid.uuid4().hex[:6]}", "fact": fact, "value": value, "note": note,
                 "reviewer": reviewer, "timestamp": _now()}
         st.reviewer_inputs.append(item)
-        self.log(case_id, reviewer, "data_supplied", review_id=item["review_id"], fact=fact)
+        self.log(case_id, reviewer, "data_supplied", review_id=item["review_id"], fact=fact, value=value)
         return item
 
     def record_disposition(self, case_id: str, reviewer: str, disposition: Disposition, rationale: str) -> dict:
