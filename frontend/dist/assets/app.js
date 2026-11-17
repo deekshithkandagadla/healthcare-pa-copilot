@@ -69,16 +69,69 @@ function drawAgents() {
     `<span class="pill ${v === "failed" ? "s-NOT_SUPPORTED" : v === "done" ? "s-SUPPORTED" : ""}">${esc(k)}: ${esc(v)}</span>`).join("");
 }
 const toolNames = {};
+const toolArgs = {};
+const raw = (obj) => `<details class="raw"><summary>raw</summary><pre>${esc(typeof obj === "string" ? obj : JSON.stringify(obj, null, 1))}</pre></details>`;
+const shortTool = (n) => n.replace("a2a:coverage-eligibility-agent/message/send", "A2A → coverage agent");
+function argText(name, a) {
+  if (!a) return "";
+  if (a.resource_type) return a.resource_type;
+  if (name === "search_policies") return `plan ${a.plan}, service date ${a.service_date}`;
+  if (a.service_date && name.startsWith("a2a")) return `${a.patient_id}, ${a.service_date}`;
+  return a.patient_id || "";
+}
+function resultText(content) {
+  let d; try { d = JSON.parse(content); } catch {
+    const h = String(content).match(/"hits": \[([^\]]*)\]/);
+    if (h) return `${(h[1].match(/"/g) || []).length / 2} policy sections`;
+    return String(content).slice(0, 90);
+  }
+  if (Array.isArray(d.resources)) return `${d.resources.length} result${d.resources.length === 1 ? "" : "s"}`;
+  if (Array.isArray(d.notes)) return `${d.notes.length} note${d.notes.length === 1 ? "" : "s"}`;
+  if (Array.isArray(d.hits)) return `${d.hits.length} policy sections`;
+  if (Array.isArray(d.authorizations)) return `${d.authorizations.length} prior authorization${d.authorizations.length === 1 ? "" : "s"}`;
+  if ("eligible" in d) return d.eligible ? `eligible, plan ${d.plan}` + (d.prior_lumbar_mri_within_12m ? ", prior MRI on file" : "") : `not eligible: ${d.reason || d.eligibility_reason || ""}`;
+  return "";
+}
+function failText(c) {
+  c = String(c);
+  const m = c.match(/\b5\d\d [A-Za-z ]+[a-z]/) || c.match(/timed? ?out[^.'"]*/i) || c.match(/unavailable[^.'"]*/i);
+  return m ? m[0] : c.slice(0, 80);
+}
+function customText(name, v) {
+  switch (name) {
+    case "mcp_tools_discovered": return `MCP: ${v.length} tools discovered`;
+    case "retrieval": {
+      const ex = v.excluded_better_ranked || [];
+      return `Policy search (${(v.semantic_backend || "").split(" (")[0]}): ${v.hits.length} sections` +
+        (ex.length ? ` · superseded ${ex[0].doc_id} ranked #${ex[0].rank_unfiltered} but excluded (not in effect)` : "");
+    }
+    case "fallback": return `Fallback: ${v.from} unavailable → ${v.to}`;
+    case "agent_retry": return `Retry: ${v.agent} (attempt ${v.attempt}) after error`;
+    case "agent_disagreement": return `Agents disagree on ${v.fact}: re-checked, ${v.resolution}`;
+    case "reviewer_input_applied": return `Reviewer input applied: ${v.fact} = ${v.value}`;
+    case "policy_exclusion": return `Policy exclusion ${v.exclusion_id} applies`;
+    case "red_flag_pathway": return `Red flags documented: criteria bypass, expedite`;
+    case "llm_usage": return `Claude: ${v.calls} calls, ${v.input_tokens} in / ${v.output_tokens} out tokens` +
+      (v.rejected_items.length ? `, ${v.rejected_items.length} output${v.rejected_items.length > 1 ? "s" : ""} rejected by verification` : ", all outputs verified");
+    default: return name;
+  }
+}
 function showEvent(ev) {
   const li = document.createElement("li");
   const t = `<span class="t">${new Date(ev.timestamp).toLocaleTimeString()}</span> `;
   switch (ev.type) {
     case "TOOL_CALL_START": toolNames[ev.toolCallId] = ev.toolCallName; return;
-    case "TOOL_CALL_ARGS": li.className = "tool"; li.innerHTML = `${t}→ <b>${esc(toolNames[ev.toolCallId] || "")}</b> ${esc(ev.delta)}`; break;
-    case "TOOL_CALL_RESULT": li.className = ev.ok ? "tool" : "fail";
-      li.innerHTML = `${t}${ev.ok ? "✓" : "✗"} ${esc(toolNames[ev.toolCallId] || "")} ${ev.latencyMs ? ev.latencyMs + " ms" : ""} <span class="muted">${esc(ev.content).slice(0, 160)}</span>`; break;
+    case "TOOL_CALL_ARGS": try { toolArgs[ev.toolCallId] = JSON.parse(ev.delta); } catch { toolArgs[ev.toolCallId] = null; } return;
+    case "TOOL_CALL_RESULT": {
+      const n = toolNames[ev.toolCallId] || "", a = toolArgs[ev.toolCallId];
+      li.className = ev.ok ? "tool" : "fail";
+      li.innerHTML = `${t}${ev.ok ? "✓" : "✗"} <b>${esc(shortTool(n))}</b> <span class="muted">${esc(argText(n, a))}</span>` +
+        ` → ${esc(ev.ok ? resultText(ev.content) : failText(ev.content))}` +
+        (ev.latencyMs ? ` <span class="muted">· ${ev.latencyMs} ms</span>` : "") + raw({ args: a, result: ev.content });
+      break;
+    }
     case "STEP_STARTED": case "STEP_FINISHED": li.className = "step"; li.innerHTML = `${t}${ev.type === "STEP_STARTED" ? "▶" : "■"} ${esc(ev.stepName)}`; break;
-    case "CUSTOM": if (ev.name === "a2ui") return; li.className = "custom"; li.innerHTML = `${t}<b>${esc(ev.name)}</b> ${esc(JSON.stringify(ev.value)).slice(0, 400)}`; break;
+    case "CUSTOM": if (ev.name === "a2ui") return; li.className = "custom"; li.innerHTML = `${t}<b>${esc(customText(ev.name, ev.value))}</b>${raw(ev.value)}`; break;
     case "RUN_ERROR": li.className = "error"; li.innerHTML = `${t}<b>RUN_ERROR</b> ${esc(ev.code)}: ${esc(ev.message)}`; break;
     case "RUN_STARTED": case "RUN_FINISHED": li.innerHTML = `${t}<b>${ev.type}</b> ${esc(ev.runId || "")}`; break;
     default: return;
@@ -87,7 +140,34 @@ function showEvent(ev) {
   li.scrollIntoView({ block: "nearest" });
 }
 
+// ------------------------------------------------------------------ evidence labels
+function evLabel(id) {
+  let m;
+  if ((m = id.match(/^NOTE-(\d+)#([^@]+)/))) return `Note ${m[1]} · ${m[2]}`;
+  if ((m = id.match(/^NOTE-(\d+)$/))) return `Note ${m[1]}`;
+  if ((m = id.match(/^Condition\/COND-(\S+)/))) return `Diagnosis ${m[1]}`;
+  if ((m = id.match(/^Observation\/OBS-(\S+)/))) return `Exam finding ${m[1]}`;
+  if ((m = id.match(/^Encounter\/ENC-(\S+)/))) return `Visit ${m[1]}`;
+  if ((m = id.match(/^Coverage\//))) return "Coverage record";
+  if ((m = id.match(/^POL-[A-Z-]+-(V\d+)#S(.+)/))) return `Policy ${m[1]} §${m[2]}`;
+  if ((m = id.match(/^EXC-(\d+)-(.+)#/))) return `Exception ${m[2]} (${m[1]})`;
+  if ((m = id.match(/^AUTH\/none/))) return "Auth history: none";
+  if ((m = id.match(/^AUTH\/(.+)/))) return `Prior auth ${m[1]}`;
+  if ((m = id.match(/^REVIEW\/(.+)/))) return `Reviewer input ${m[1]}`;
+  return id;
+}
+function evChips(ids) {
+  const visits = ids.filter((e) => e.startsWith("Encounter/"));
+  const others = ids.filter((e) => !e.startsWith("Encounter/"));
+  const chip = (e) => `<button type="button" class="chip" data-ev="${esc(e)}" title="${esc(e)}">${esc(evLabel(e))}</button>`;
+  const vchip = visits.length > 2
+    ? `<button type="button" class="chip" data-evs="${esc(visits.join("|"))}" title="${esc(visits.join(", "))}">${visits.length} visits</button>`
+    : visits.map(chip).join("");
+  return vchip + others.map(chip).join("");
+}
+
 // ------------------------------------------------------------------ A2UI renderer
+let EVIDENCE = {};
 const CATALOG = {
   RecommendationBanner: (p) => `<div class="banner"><div class="rec"><span class="pill r-${esc(p.recommendation)}">${esc(p.recommendation)}</span>
       ${p.red_flag ? '<span class="pill s-NOT_SUPPORTED">RED FLAG · EXPEDITE</span>' : ""}</div>
@@ -99,16 +179,19 @@ const CATALOG = {
   CriteriaChecklist: (p) => `<h3>${esc(p.title)}</h3><table><tr><th>Criterion</th><th>Status</th><th>Evidence</th></tr>${p.items.map((i) => `
       <tr><td><b>${esc(i.criterion_id)}</b> ${esc(i.description)}<div class="muted">${esc(i.rationale)}</div></td>
       <td><span class="pill s-${esc(i.status)}">${esc(i.status)}</span></td>
-      <td>${i.evidence_ids.map((e) => `<div class="ev" data-ev="${esc(e)}">${esc(e)}</div>`).join("")}</td></tr>`).join("")}</table>`,
+      <td class="chips">${evChips(i.evidence_ids)}</td></tr>
+      <tr class="quote-row" hidden><td colspan="3"></td></tr>`).join("")}</table>`,
   MissingDocumentationForm: (p) => `<h3>${esc(p.title)}</h3><form id="missing-form">${p.fields.map((f) => `
       <label>${esc(f.label)}</label>${f.input === "boolean"
         ? `<select name="${esc(f.field_id)}"><option value="">—</option><option value="true">Yes</option><option value="false">No</option></select>`
         : `<input type="text" inputmode="numeric" autocomplete="off" name="${esc(f.field_id)}" data-min="${f.min ?? ""}" data-max="${f.max ?? ""}" placeholder="whole number, ${f.min ?? 0}–${f.max ?? ""}">`}`).join("")}
       <label>Source of this information (required)</label><input type="text" name="_note" placeholder="e.g. Outside PT records received 2026-10-06">
       <p><button type="submit">Save and re-run</button> <span id="form-msg" class="err"></span></p></form>`,
-  EvidenceList: (p) => `<h3>Evidence</h3>${p.items.map((e) => `<div class="evidence-item ${e.quarantined ? "q" : ""}" id="ev-${esc(e.evidence_id)}">
-      <b>${esc(e.evidence_id)}</b> <span class="pill">${esc(e.source_type)}</span> ${e.quarantined ? '<span class="pill s-NOT_SUPPORTED">QUARANTINED</span>' : ""}
-      <span class="muted">${esc(e.date)}</span><div>${esc(e.quote)}</div></div>`).join("")}`,
+  EvidenceList: (p) => { EVIDENCE = Object.fromEntries(p.items.map((e) => [e.evidence_id, e]));
+    const q = p.items.filter((e) => e.quarantined).length;
+    return `<details id="evidence-box"><summary><h3 style="display:inline">All evidence (${p.items.length} items${q ? `, ${q} quarantined` : ""})</h3></summary>${p.items.map((e) => `<div class="evidence-item ${e.quarantined ? "q" : ""}" id="ev-${esc(e.evidence_id)}">
+      <b>${esc(evLabel(e.evidence_id))}</b> <span class="muted">${esc(e.evidence_id)}</span> <span class="pill">${esc(e.source_type)}</span> ${e.quarantined ? '<span class="pill s-NOT_SUPPORTED">QUARANTINED</span>' : ""}
+      <span class="muted">${esc(e.date)}</span><div>${esc(e.quote)}</div></div>`).join("")}</details>`; },
   ReviewerActions: (p) => `<h3>Reviewer action</h3><form id="actions-form">
       <label>Disposition</label><select name="disposition">${p.dispositions.map((d) => `<option>${esc(d)}</option>`).join("")}</select>
       <label>Rationale</label><textarea name="message" rows="2"></textarea>
@@ -119,6 +202,9 @@ const CATALOG = {
 function renderSurface(messages) {
   const upd = messages.find((m) => m.surfaceUpdate)?.surfaceUpdate;
   if (!upd) return;
+  // Evidence data first, so checklist chips can show quotes inline.
+  const evc = upd.components.find((c) => c.component.EvidenceList);
+  if (evc) EVIDENCE = Object.fromEntries(evc.component.EvidenceList.items.map((e) => [e.evidence_id, e]));
   const byId = Object.fromEntries(upd.components.map((c) => [c.id, c.component]));
   $("#surface-root").innerHTML = upd.layout.children.map((id) => {
     const [type, props] = Object.entries(byId[id])[0];
@@ -129,9 +215,16 @@ function renderSurface(messages) {
 }
 
 function wireSurface() {
-  document.querySelectorAll(".ev").forEach((el) => (el.onclick = () => {
-    document.querySelectorAll(".evidence-item").forEach((x) => x.classList.remove("hl"));
-    const t = document.getElementById("ev-" + el.dataset.ev); if (t) { t.classList.add("hl"); t.scrollIntoView({ block: "center" }); }
+  document.querySelectorAll(".chip").forEach((el) => (el.onclick = () => {
+    const row = el.closest("tr").nextElementSibling;
+    const ids = el.dataset.evs ? el.dataset.evs.split("|") : [el.dataset.ev];
+    const open = !row.hidden && row.dataset.for === ids.join("|");
+    document.querySelectorAll(".chip.on").forEach((c) => c.classList.remove("on"));
+    document.querySelectorAll(".quote-row").forEach((r) => { r.hidden = true; });
+    if (open) return;
+    el.classList.add("on"); row.dataset.for = ids.join("|"); row.hidden = false;
+    row.firstElementChild.innerHTML = ids.map((id) => { const e = EVIDENCE[id] || {};
+      return `<div class="quote"><b>${esc(evLabel(id))}</b> <span class="muted">${esc(id)}${e.date ? " · " + esc(e.date) : ""}</span><div>${esc(e.quote || "")}</div></div>`; }).join("");
   }));
   const mf = $("#missing-form");
   if (mf) mf.onsubmit = async (e) => {
