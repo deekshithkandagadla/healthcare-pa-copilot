@@ -304,13 +304,13 @@
   "events": [
     {
       "type": "RUN_STARTED",
-      "timestamp": 1794886702271,
+      "timestamp": 1794887909786,
       "threadId": "PA-005",
-      "runId": "run-d894a51e"
+      "runId": "run-3d218435"
     },
     {
       "type": "STATE_SNAPSHOT",
-      "timestamp": 1794886702271,
+      "timestamp": 1794887909786,
       "snapshot": {
         "case_id": "PA-005",
         "stage": "investigating",
@@ -324,7 +324,7 @@
     },
     {
       "type": "CUSTOM",
-      "timestamp": 1794886702271,
+      "timestamp": 1794887909789,
       "name": "mcp_tools_discovered",
       "value": [
         "get_patient_context",
@@ -337,167 +337,167 @@
     },
     {
       "type": "STEP_STARTED",
-      "timestamp": 1794886702271,
+      "timestamp": 1794887909789,
       "stepName": "clinical_evidence"
     },
     {
       "type": "STEP_STARTED",
-      "timestamp": 1794886702271,
+      "timestamp": 1794887909789,
       "stepName": "coverage_eligibility"
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702271,
-      "toolCallId": "call-d9c508b5",
+      "timestamp": 1794887909789,
+      "toolCallId": "call-b4f8b5d8",
       "toolCallName": "search_fhir",
       "agent": "clinical_evidence"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702271,
-      "toolCallId": "call-d9c508b5",
+      "timestamp": 1794887909789,
+      "toolCallId": "call-b4f8b5d8",
       "delta": "{\"resource_type\": \"Condition\", \"patient_id\": \"PT-005\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702271,
-      "toolCallId": "call-d9c508b5"
+      "timestamp": 1794887909789,
+      "toolCallId": "call-b4f8b5d8"
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702272,
-      "toolCallId": "call-dd0a54ec",
+      "timestamp": 1794887909789,
+      "toolCallId": "call-1fc4e3d9",
       "toolCallName": "a2a:coverage-eligibility-agent/message/send",
       "agent": "supervisor"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702272,
-      "toolCallId": "call-dd0a54ec",
+      "timestamp": 1794887909789,
+      "toolCallId": "call-1fc4e3d9",
       "delta": "{\"patient_id\": \"PT-005\", \"service_code\": \"72148\", \"service_date\": \"2026-10-12\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702272,
-      "toolCallId": "call-dd0a54ec"
+      "timestamp": 1794887909789,
+      "toolCallId": "call-1fc4e3d9"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702273,
-      "messageId": "msg-call-d9c508b5",
-      "toolCallId": "call-d9c508b5",
+      "timestamp": 1794887909791,
+      "messageId": "msg-call-b4f8b5d8",
+      "toolCallId": "call-b4f8b5d8",
       "role": "tool",
       "content": "{\"resource_type\": \"Condition\", \"resources\": [\"Condition/COND-005-01\", \"Condition/COND-005-02\"]}",
       "ok": true,
-      "latencyMs": 1.0
+      "latencyMs": 3.5
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-23826371",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-44fbd049",
       "toolCallName": "search_fhir",
       "agent": "clinical_evidence"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-23826371",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-44fbd049",
       "delta": "{\"resource_type\": \"Observation\", \"patient_id\": \"PT-005\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-23826371"
+      "timestamp": 1794887909791,
+      "toolCallId": "call-44fbd049"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702273,
-      "messageId": "msg-call-23826371",
-      "toolCallId": "call-23826371",
+      "timestamp": 1794887909791,
+      "messageId": "msg-call-44fbd049",
+      "toolCallId": "call-44fbd049",
       "role": "tool",
       "content": "{\"resource_type\": \"Observation\", \"resources\": []}",
       "ok": true,
-      "latencyMs": 0.3
+      "latencyMs": 0.6
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-9416624b",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-9bc46ec0",
       "toolCallName": "search_fhir",
       "agent": "clinical_evidence"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-9416624b",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-9bc46ec0",
       "delta": "{\"resource_type\": \"Encounter\", \"patient_id\": \"PT-005\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-9416624b"
+      "timestamp": 1794887909791,
+      "toolCallId": "call-9bc46ec0"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702273,
-      "messageId": "msg-call-9416624b",
-      "toolCallId": "call-9416624b",
+      "timestamp": 1794887909791,
+      "messageId": "msg-call-9bc46ec0",
+      "toolCallId": "call-9bc46ec0",
       "role": "tool",
       "content": "{\"resource_type\": \"Encounter\", \"resources\": [\"Encounter/ENC-005-03\", \"Encounter/ENC-005-04\", \"Encounter/ENC-005-05\"]}",
       "ok": true,
-      "latencyMs": 0.3
+      "latencyMs": 0.6
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-79eaf14e",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-a14bde72",
       "toolCallName": "get_clinical_notes",
       "agent": "clinical_evidence"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-79eaf14e",
+      "timestamp": 1794887909791,
+      "toolCallId": "call-a14bde72",
       "delta": "{\"patient_id\": \"PT-005\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702273,
-      "toolCallId": "call-79eaf14e"
+      "timestamp": 1794887909791,
+      "toolCallId": "call-a14bde72"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702274,
-      "messageId": "msg-call-79eaf14e",
-      "toolCallId": "call-79eaf14e",
+      "timestamp": 1794887909791,
+      "messageId": "msg-call-a14bde72",
+      "toolCallId": "call-a14bde72",
       "role": "tool",
       "content": "{\"notes\": [{\"note_id\": \"NOTE-007\", \"date\": \"2026-09-28\", \"chars\": 210}, {\"note_id\": \"NOTE-008\", \"date\": \"2026-09-30\", \"chars\": 390}]}",
       "ok": true,
-      "latencyMs": 0.4
+      "latencyMs": 2.6
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702276,
-      "messageId": "msg-call-dd0a54ec",
-      "toolCallId": "call-dd0a54ec",
+      "timestamp": 1794887909799,
+      "messageId": "msg-call-1fc4e3d9",
+      "toolCallId": "call-1fc4e3d9",
       "role": "tool",
-      "content": "{\"agent\": \"coverage_eligibility\", \"eligible\": true, \"plan\": \"PPO-GOLD\", \"coverage_id\": \"Coverage/COV-005\", \"eligibility_reason\": null, \"prior_lumbar_mri_within_12m\": true, \"prior_auth_ids\": [\"AUTH-5501\"], \"authorization_count\": 1, \"_a2a_tool_calls\": [{\"tool\": \"check_eligibility\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\", \"service_date\": \"2026-10-12\"}, \"ok\": true, \"ms\": 0.5}, {\"tool\": \"get_authorization_history\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\"}, \"ok\": true, \"ms\": 0.4}]}",
+      "content": "{\"agent\": \"coverage_eligibility\", \"eligible\": true, \"plan\": \"PPO-GOLD\", \"coverage_id\": \"Coverage/COV-005\", \"eligibility_reason\": null, \"prior_lumbar_mri_within_12m\": true, \"prior_auth_ids\": [\"AUTH-5501\"], \"authorization_count\": 1, \"_a2a_tool_calls\": [{\"tool\": \"check_eligibility\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\", \"service_date\": \"2026-10-12\"}, \"ok\": true, \"ms\": 1.0}, {\"tool\": \"get_authorization_history\", \"agent\": \"coverage_eligibility\", \"args\": {\"patient_id\": \"PT-005\"}, \"ok\": true, \"ms\": 0.7}]}",
       "ok": true,
       "latencyMs": null
     },
     {
       "type": "STEP_FINISHED",
-      "timestamp": 1794886702276,
+      "timestamp": 1794887909799,
       "stepName": "clinical_evidence"
     },
     {
       "type": "STEP_FINISHED",
-      "timestamp": 1794886702276,
+      "timestamp": 1794887909799,
       "stepName": "coverage_eligibility"
     },
     {
       "type": "STATE_DELTA",
-      "timestamp": 1794886702276,
+      "timestamp": 1794887909799,
       "delta": [
         {
           "op": "replace",
@@ -513,63 +513,63 @@
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-8db969e1",
+      "timestamp": 1794887909799,
+      "toolCallId": "call-3deebe13",
       "toolCallName": "check_eligibility",
       "agent": "coverage_eligibility"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-8db969e1",
+      "timestamp": 1794887909799,
+      "toolCallId": "call-3deebe13",
       "delta": "{\"patient_id\": \"PT-005\", \"service_date\": \"2026-10-12\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-8db969e1"
+      "timestamp": 1794887909799,
+      "toolCallId": "call-3deebe13"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702276,
-      "messageId": "msg-call-8db969e1",
-      "toolCallId": "call-8db969e1",
+      "timestamp": 1794887909799,
+      "messageId": "msg-call-3deebe13",
+      "toolCallId": "call-3deebe13",
       "role": "tool",
       "content": "{\"eligible\": true, \"coverage_id\": \"Coverage/COV-005\", \"plan\": \"PPO-GOLD\", \"period\": {\"start\": \"2021-01-01\"}}",
       "ok": true,
-      "latencyMs": 0.3
+      "latencyMs": 0.4
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-704e1b53",
+      "timestamp": 1794887909799,
+      "toolCallId": "call-4ef3c6f8",
       "toolCallName": "get_authorization_history",
       "agent": "coverage_eligibility"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-704e1b53",
+      "timestamp": 1794887909799,
+      "toolCallId": "call-4ef3c6f8",
       "delta": "{\"patient_id\": \"PT-005\"}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-704e1b53"
+      "timestamp": 1794887909799,
+      "toolCallId": "call-4ef3c6f8"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702276,
-      "messageId": "msg-call-704e1b53",
-      "toolCallId": "call-704e1b53",
+      "timestamp": 1794887909801,
+      "messageId": "msg-call-4ef3c6f8",
+      "toolCallId": "call-4ef3c6f8",
       "role": "tool",
       "content": "{\"authorizations\": [{\"auth_id\": \"AUTH-5501\", \"patient_id\": \"PT-005\", \"service_code\": \"72148\", \"service_date\": \"2026-05-02\", \"status\": \"approved\", \"description\": \"Lumbar spine MRI\"}]}",
       "ok": true,
-      "latencyMs": 0.3
+      "latencyMs": 0.6
     },
     {
       "type": "CUSTOM",
-      "timestamp": 1794886702276,
+      "timestamp": 1794887909801,
       "name": "agent_disagreement",
       "value": {
         "fact": "prior_lumbar_mri_within_12m",
@@ -584,48 +584,48 @@
     },
     {
       "type": "STEP_STARTED",
-      "timestamp": 1794886702276,
+      "timestamp": 1794887909801,
       "stepName": "policy_rag"
     },
     {
       "type": "TOOL_CALL_START",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-f1e41ff7",
+      "timestamp": 1794887909801,
+      "toolCallId": "call-536ed88e",
       "toolCallName": "search_policies",
       "agent": "policy_rag"
     },
     {
       "type": "TOOL_CALL_ARGS",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-f1e41ff7",
+      "timestamp": 1794887909801,
+      "toolCallId": "call-536ed88e",
       "delta": "{\"query\": \"lumbar spine MRI for low back pain criteria conservative treatment physical therapy\", \"service_code\": \"72148\", \"plan\": \"PPO-GOLD\", \"service_date\": \"2026-10-12\", \"k\": 6}"
     },
     {
       "type": "TOOL_CALL_END",
-      "timestamp": 1794886702276,
-      "toolCallId": "call-f1e41ff7"
+      "timestamp": 1794887909801,
+      "toolCallId": "call-536ed88e"
     },
     {
       "type": "TOOL_CALL_RESULT",
-      "timestamp": 1794886702278,
-      "messageId": "msg-call-f1e41ff7",
-      "toolCallId": "call-f1e41ff7",
+      "timestamp": 1794887909807,
+      "messageId": "msg-call-536ed88e",
+      "toolCallId": "call-536ed88e",
       "role": "tool",
-      "content": "{\"query\": \"lumbar spine MRI for low back pain criteria conservative treatment physical therapy\", \"semantic_backend\": \"LSA (TF-IDF + SVD)\", \"filters\": {\"service_code\": \"72148\", \"plan\": \"PPO-GOLD\", \"service_date\": \"2026-10-12\", \"family\": null}, \"hits\": [\"POL-MRI-LUMBAR-V3#S3.4\", \"POL-MRI-LUMBAR-V3#S3.2\", \"POL-MRI-LUMBAR-V3#S1\", \"POL-MRI-LUMBAR-V3#S5.1\", \"POL-MRI-LUMBAR-V3#S2\", \"POL-MRI-LUMBAR-V3#S3.3\"], \"excluded_better_ranked\": [{\"chunk_id\": \"POL-MRI-LUMBAR-V2#S1\", \"doc_id\": \"POL-MRI-LUMBAR-V2\", \"rank_unfiltered\": 1, \"reason\": \"not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)\"},",
+      "content": "{\"query\": \"lumbar spine MRI for low back pain criteria conservative treatment physical therapy\", \"semantic_backend\": \"neural (BAAI/bge-small-en-v1.5)\", \"filters\": {\"service_code\": \"72148\", \"plan\": \"PPO-GOLD\", \"service_date\": \"2026-10-12\", \"family\": null}, \"hits\": [\"POL-MRI-LUMBAR-V3#S3.4\", \"POL-MRI-LUMBAR-V3#S3.2\", \"POL-MRI-LUMBAR-V3#S5.1\", \"POL-MRI-LUMBAR-V3#S1\", \"POL-MRI-LUMBAR-V3#S2\", \"POL-MRI-LUMBAR-V3#S3.3\"], \"excluded_better_ranked\": [{\"chunk_id\": \"POL-MRI-LUMBAR-V2#S1\", \"doc_id\": \"POL-MRI-LUMBAR-V2\", \"rank_unfiltered\": 1, \"reason\": \"not in effect on 2026-10-12 (effective 2024-07-01 to 2",
       "ok": true,
-      "latencyMs": 1.2
+      "latencyMs": 10.4
     },
     {
       "type": "CUSTOM",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "name": "retrieval",
       "value": {
-        "semantic_backend": "LSA (TF-IDF + SVD)",
+        "semantic_backend": "neural (BAAI/bge-small-en-v1.5)",
         "hits": [
           "POL-MRI-LUMBAR-V3#S3.4",
           "POL-MRI-LUMBAR-V3#S3.2",
-          "POL-MRI-LUMBAR-V3#S1",
           "POL-MRI-LUMBAR-V3#S5.1",
+          "POL-MRI-LUMBAR-V3#S1",
           "POL-MRI-LUMBAR-V3#S2",
           "POL-MRI-LUMBAR-V3#S3.3"
         ],
@@ -643,68 +643,68 @@
             "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S4",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S2",
             "doc_id": "POL-MRI-LUMBAR-V2",
             "rank_unfiltered": 3,
             "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S2",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S4",
             "doc_id": "POL-MRI-LUMBAR-V2",
             "rank_unfiltered": 4,
             "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S3.1",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.3",
             "doc_id": "POL-MRI-LUMBAR-V2",
             "rank_unfiltered": 5,
             "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S3.3",
+            "chunk_id": "POL-MRI-LUMBAR-V2#S3.1",
             "doc_id": "POL-MRI-LUMBAR-V2",
             "rank_unfiltered": 7,
             "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
-            "chunk_id": "EXC-2025-GOLD-PT#E1",
-            "doc_id": "EXC-2025-GOLD-PT",
-            "rank_unfiltered": 9,
-            "reason": "not in effect on 2026-10-12 (effective 2025-01-01 to 2025-12-31)"
+            "chunk_id": "POL-MRI-LUMBAR-V2#S5.1",
+            "doc_id": "POL-MRI-LUMBAR-V2",
+            "rank_unfiltered": 8,
+            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
           },
           {
             "chunk_id": "EXC-2026-RURAL-PT#E1",
             "doc_id": "EXC-2026-RURAL-PT",
-            "rank_unfiltered": 11,
+            "rank_unfiltered": 13,
             "reason": "plan PPO-GOLD not listed (HMO-RURAL)"
           },
           {
-            "chunk_id": "POL-MRI-LUMBAR-V2#S5.1",
-            "doc_id": "POL-MRI-LUMBAR-V2",
-            "rank_unfiltered": 12,
-            "reason": "not in effect on 2026-10-12 (effective 2024-07-01 to 2026-02-28)"
+            "chunk_id": "EXC-2025-GOLD-PT#E1",
+            "doc_id": "EXC-2025-GOLD-PT",
+            "rank_unfiltered": 14,
+            "reason": "not in effect on 2026-10-12 (effective 2025-01-01 to 2025-12-31)"
           }
         ]
       }
     },
     {
       "type": "STEP_FINISHED",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "stepName": "policy_rag"
     },
     {
       "type": "STEP_STARTED",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "stepName": "criteria_quality"
     },
     {
       "type": "STEP_FINISHED",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "stepName": "criteria_quality"
     },
     {
       "type": "STATE_SNAPSHOT",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "snapshot": {
         "case_id": "PA-005",
         "stage": "ready_for_review",
@@ -713,9 +713,9 @@
     },
     {
       "type": "RUN_FINISHED",
-      "timestamp": 1794886702278,
+      "timestamp": 1794887909807,
       "threadId": "PA-005",
-      "runId": "run-d894a51e",
+      "runId": "run-3d218435",
       "result": {
         "recommendation": "SPECIALIST_REVIEW"
       }
