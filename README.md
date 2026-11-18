@@ -7,6 +7,11 @@ human reviewer a recommendation in which every finding links to a source. The sy
 issues a denial: it can only recommend `MEETS_CRITERIA`, `MORE_INFORMATION_NEEDED`,
 `DOES_NOT_APPEAR_TO_MEET_CRITERIA` (always routed to a human) or `SPECIALIST_REVIEW`.
 
+**Demo video:** [walkthrough on Google Drive](https://drive.google.com/file/d/1naBJ1c1HlZzrmltZ7d8sSQjQnk61R70V/view?usp=drive_link)
+(the 7 demo scenarios, agent interactions, a test run and the key design decisions).
+
+**Docs:** [Architecture](docs/ARCHITECTURE.md) · [Evaluation report](docs/EVALUATION.md)
+
 ## Quick start
 
 Requires Python 3.11 or newer (tested on 3.11 and 3.13).
